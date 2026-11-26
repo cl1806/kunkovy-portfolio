@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>кункови.ру</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+</head>
+<body>
+
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader-fill" id="preloader-fill"></div>
+    <div class="preloader-content">
+      <img src="Логотипы/Лого 2.png" alt="Логотип кункови.ру" class="preloader-logo">
+      <span class="preloader-percent" id="preloader-percent">0%</span>
+    </div>
+  </div>
+
+  <header class="site-header" id="site-header">
+    <div class="container header-centered-inner">
+      <a href="index.html" class="logo" id="logo-link" aria-label="На главную">
+        <img src="Логотипы/Лого.png" alt="кункови.ру">
+      </a>
+
+      <nav class="header-nav" aria-label="Основная навигация">
+        <ul class="nav-links">
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="works.html" class="is-active">Работы</a></li>
+          <li><a href="about.html">Обо мне</a></li>
+          <li><a href="contact.html">Контакты</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page-content">
+    <section class="page-head reveal" style="--delay: 0.05s;">
+      <span class="hero-tag">Архив работ</span>
+      <h1 class="page-title">Тут вы можете посмотреть на работы</h1>
+    </section>
+
+    <section class="page-body reveal" style="--delay: 0.15s;">
+      <!-- Скрытая панель владельца (не видна обычным посетителям) -->
+      <div class="owner-panel" id="owner-panel" hidden>
+        <div class="owner-panel-head">
+          <div>
+            <span class="owner-badge">Режим владельца</span>
+            <h2 class="owner-panel-title">Добавить новую работу</h2>
+          </div>
+          <button class="owner-exit-btn" id="owner-exit-btn" type="button">Выйти из режима ✕</button>
+        </div>
+
+        <form class="owner-form" id="owner-form">
+          <div class="owner-form-grid">
+            <label class="owner-field">
+              <span>Год</span>
+              <select id="owner-year" required>
+                <option value="2026" selected>2026</option>
+                <option value="2027">2027</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+              </select>
+            </label>
+
+            <label class="owner-field">
+              <span>Категория / тип</span>
+              <input type="text" id="owner-category" value="Плакат" placeholder="Например: Плакат или Айдентика" required>
+            </label>
+
+            <label class="owner-field">
+              <span>Название работы</span>
+              <input type="text" id="owner-title" placeholder="Например: Новый плакат" required>
+            </label>
+
+            <label class="owner-field">
+              <span>Файл в папке Работы/<span id="owner-folder-year">2026</span>/</span>
+              <div class="owner-file-row">
+                <input type="text" id="owner-filename" placeholder="Имя файла.jpg" required>
+                <label class="owner-file-pick">
+                  Выбрать
+                  <input type="file" id="owner-file-input" accept="image/*" hidden>
+                </label>
+              </div>
+            </label>
+          </div>
+
+          <label class="owner-field">
+            <span>Описание работы</span>
+            <textarea id="owner-desc" rows="2" placeholder="Краткое описание идеи, типографики и графики..." required></textarea>
+          </label>
+
+          <div class="owner-actions">
+            <button class="btn" type="submit">Добавить работу</button>
+            <button class="btn btn--outline" id="owner-download-html" type="button">Скачать обновлённый works.html</button>
+            <button class="btn btn--outline" id="owner-copy-code" type="button">Скопировать код карточки</button>
+          </div>
+          <p class="owner-hint" id="owner-status">Картинка должна лежать в папке <strong>Работы/<span id="owner-hint-year">2026</span>/</strong>. После добавления скачайте обновлённый <strong>works.html</strong> и замените им файл в папке сайта, чтобы работу увидели все посетители.</p>
+        </form>
+      </div>
+
+      <!-- Категории по годам -->
+      <div class="year-filters" role="group" aria-label="Фильтр работ по годам">
+        <button class="filter-btn is-active" type="button" data-filter="all">Все</button>
+        <button class="filter-btn" type="button" data-filter="2024">2024</button>
+        <button class="filter-btn" type="button" data-filter="2025">2025</button>
+        <button class="filter-btn" type="button" data-filter="2026">2026</button>
+        <button class="filter-btn" type="button" data-filter="2027">2027</button>
+      </div>
+
+      <div class="projects-grid" id="projects-grid">
+
+        <!-- 2026 -->
+        <article class="project-card" data-year="2026" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2026/Пустое Множество.jpg" alt="Плакат Пустое Множество — Алексей Румянцев">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат • 2026</div>
+            <h3>Пустое Множество</h3>
+            <p>Контрастный монохромный постер с портретом Алексея Румянцева (вокалиста «Пустого Множества» и «Пионерлагеря Пыльная Радуга»), фактурой бетонной стены и ручным леттерингом.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2026" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2026/До бед.jpg" alt="Плакат До бед — Пустое Множество">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат • 2026</div>
+            <h3>До бед</h3>
+            <p>Графический плакат по мотивам трека группы «Пустое Множество»: контрастный силуэт с терновым венцом, фактура мятой бумаги и рукописная типографика.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2026" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2026/Моя мечта.jpg" alt="Плакат Моя мечта?">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат • 2026</div>
+            <h3>Моя мечта?</h3>
+            <p>Монохромный постер с грубой зернистой печатью, рваной акцидентной типографикой и контрастным высказыванием о детстве.</p>
+          </div>
+        </article>
+
+        <!-- 2025 -->
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 0. Обложка.jpg" alt="Китайский гороскоп 2025 — Обложка (0/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Обложка (0/12)</h3>
+            <p>Титульный лист серии плакатов о 12-летнем цикле восточного календаря: фактурный тёмный фон, металлический зодиакальный круг и узкая акцидентная типографика.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 1. Крыса.jpg" alt="Китайский гороскоп 2025 — Крыса (1/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Крыса (1/12)</h3>
+            <p>Первый знак цикла — Белая металлическая крыса: растрово-гравюрная графика на состаренной бумаге, хронология годов и описание характера знака.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 2. Бык.jpg" alt="Китайский гороскоп 2025 — Бык (2/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Бык (2/12)</h3>
+            <p>Второй знак цикла — Белый металлический бык: тёплая охристо-оранжевая гравюра всадника на быке, модульная вёрстка и рваные края листа.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 3. Тигр.jpg" alt="Китайский гороскоп 2025 — Тигр (3/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Тигр (3/12)</h3>
+            <p>Третий знак цикла — Чёрный водяной тигр: динамичная изумрудно-зелёная гравюра тигра в прыжке и строгая журнально-плакатная сетка.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 4. Кролик.jpg" alt="Китайский гороскоп 2025 — Кролик (4/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Кролик (4/12)</h3>
+            <p>Четвёртый знак цикла — Белый металлический кролик: контрастная фактурная иллюстрация с эффектом печати и выключка текста по ширине.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 5. Дракон.jpg" alt="Китайский гороскоп 2025 — Дракон (5/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Дракон (5/12)</h3>
+            <p>Пятый знак цикла — Синий деревянный дракон: вертикальная композиция с сине-фиолетовым градиентным растром и винтажной бумажной основой.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 6. Змея.jpg" alt="Китайский гороскоп 2025 — Змея (6/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Змея (6/12)</h3>
+            <p>Шестой знак цикла — Зелёная деревянная змея: яркий изумрудный акцент на фактурном сером листе и плотная узкая типографика.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 7. Лошадь.jpg" alt="Китайский гороскоп 2025 — Лошадь (7/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Лошадь (7/12)</h3>
+            <p>Седьмой знак цикла — Синяя деревянная лошадь: многоцветная голографическая гравюра с крупным растровым зерном и чёткой иерархией текста.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 8. Коза.jpg" alt="Китайский гороскоп 2025 — Коза (8/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Коза (8/12)</h3>
+            <p>Восьмой знак цикла — Синяя деревянная коза: сочетание мадженты и глубокого зелёного цвета в гравюрной штриховке на состаренной бумаге.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 9. Обезьяна.jpg" alt="Китайский гороскоп 2025 — Обезьяна (9/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Обезьяна (9/12)</h3>
+            <p>Девятый знак цикла — Красная огненная обезьяна: выразительная растрово-гравюрная иллюстрация в тёплых огненных оттенках.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 10. Петух.jpg" alt="Китайский гороскоп 2025 — Петух (10/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Петух (10/12)</h3>
+            <p>Десятый знак цикла — Красный огненный петух: детальная изумрудно-зелёная гравюрная штриховка с фактурой ручной печати.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 11. Собака.jpg" alt="Китайский гороскоп 2025 — Собака (11/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Собака (11/12)</h3>
+            <p>Одиннадцатый знак цикла — Жёлтая земляная собака: многоцветный растровый переход на состаренной бумаге с рваным краем.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/КГ 12. Свинья.jpg" alt="Китайский гороскоп 2025 — Свинья (12/12)">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Серия «Китайский гороскоп» • 2025</div>
+            <h3>Свинья (12/12)</h3>
+            <p>Завершающий двенадцатый знак цикла — Жёлтая земляная свинья: контрастная гравюрная подача с тёплыми и холодными оттенками растра.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/Творческое безумие 8. Лекция 1.jpg" alt="Плакат Kölner Dom — Творческое безумие 8">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат / Творческое безумие 8 • 2025</div>
+            <h3>Kölner Dom (Лекция 1)</h3>
+            <p>Мрачный готический постер с Кёльнским собором, красной фрактурной типографикой, декоративной рамкой и текстурой потёртой печати.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/Творческое безумие 8. Лекция 3.jpg" alt="Плакат Двор-колодец — Творческое безумие 8">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат / Творческое безумие 8 • 2025</div>
+            <h3>Двор-колодец (Лекция 3)</h3>
+            <p>Графический плакат о петербургском архитектурном феномене с радиальной звездчатой маской, текстурой бетона и синим акцентом.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/Творческое безумие 8. Лекция 4.jpg" alt="Плакат The Toys You Missed — Творческое безумие 8">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат / Творческое безумие 8 • 2025</div>
+            <h3>The Toys You Missed (Лекция 4)</h3>
+            <p>Ностальгический коллажный постер об игрушках эпохи СССР с контрастной монохромной графикой, выносками и знаками качества.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/Творческое безумие 8. Лекция 5.jpg" alt="Плакат Манипулирование рынком — Творческое безумие 8">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат / Творческое безумие 8 • 2025</div>
+            <h3>Манипулирование рынком (Лекция 5)</h3>
+            <p>Иронично-правовой постер по статье 185.3 УК РФ с кислотным градиентом, биржевыми свечами и выразительной иллюстрацией.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2025" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2025/Творческое безумие 8. Лекция 6.jpg" alt="Разворот Японские игрушки — Творческое безумие 8">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Редакционный дизайн / Творческое безумие 8 • 2025</div>
+            <h3>Японские игрушки (Лекция 6)</h3>
+            <p>Журнальный разворот об эволюции японских игрушек от традиционных кукол кокэси до роботов с двуязычным заголовком и графикой на полях.</p>
+          </div>
+        </article>
+
+        <!-- 2024 -->
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Плакат Берсерк.jpg" alt="Плакат Берсерк — трибьют памяти Кэнтаро Миуры">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат • 2024</div>
+            <h3>Берсерк</h3>
+            <p>Трибьют-плакат памяти Кэнтаро Миуры: контрастная гравюрная графика меча, акцентная типографика с японской катаканой и зернистая фактура.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Мерч Студсовета СПбКТ 2024 (лицо).jpg" alt="Мерч Студсовета СПбКТ 2024 — лицевая сторона">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Мерч / Айдентика • 2024</div>
+            <h3>Мерч Студсовета СПбКТ (Лицо)</h3>
+            <p>Лицевая сторона фирменной футболки с минималистичным геометрическим знаком на груди и кастомной биркой на вороте.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Мерч Студсовета СПбКТ 2024 (спина).jpg" alt="Мерч Студсовета СПбКТ 2024 — принт на спине">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Мерч / Графика • 2024</div>
+            <h3>Мерч Студсовета СПбКТ (Спина)</h3>
+            <p>Графический принт на спину с вышками связи, слоганом «Приём? На связи!» и кодами специальностей колледжа.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Текстовое безумие 2024. 2 лекция.jpg" alt="Плакат The Bronze Horseman">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат / Типографика • 2024</div>
+            <h3>The Bronze Horseman</h3>
+            <p>Типографический плакат в рамках интенсива «Текстовое безумие»: контрастный силуэт Медного всадника и модульная вёрстка заголовка.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Текстовое безумие 2024. Домашка 2.jpg" alt="Плакат Прямоугольник">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Типографика / Леттеринг • 2024</div>
+            <h3>Прямоугольник</h3>
+            <p>Экспериментальный плакат с кастомным блочным леттерингом, геометрической схемой и выключкой текста по ширине.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Текстовое безумие 2024. Домашнее задание 1.jpg" alt="Плакат Гротеск">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Типографика • 2024</div>
+            <h3>Гротеск</h3>
+            <p>Шрифтовая композиция об истории и смыслах термина «гротеск» с каскадной ритмикой заголовков и чистой вёрсткой.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Текстовое безумие 2024. Технологический институт.jpg" alt="Плакат Технологический институт">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат / Серия «Метро» • 2024</div>
+            <h3>Технологический институт</h3>
+            <p>Плакат о кросс-платформенном узле петербургского метрополитена с акцидентной типографикой и градиентным тонированием.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Текстовое безумие 2024. Шаверма.jpg" alt="Плакат Шаверма">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат • 2024</div>
+            <h3>Шаверма</h3>
+            <p>Контрастный плакат с массивным сверхшироким заголовком и предметной подачей петербургской гастрономической классики.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Проспект Ветеранов.jpg" alt="Плакат Проспект Ветеранов">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат / Серия «Метро» • 2024</div>
+            <h3>Проспект Ветеранов</h3>
+            <p>Плакат о южной конечной станции первой линии с красной тонировкой барельефа и сочетанием антиквы с каллиграфическими росчерками.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Пушкинская.jpg" alt="Плакат Пушкинская">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат / Серия «Метро» • 2024</div>
+            <h3>Пушкинская</h3>
+            <p>Плакат из серии о петербургском метрополитене с выразительной пластикой акцидентного шрифта и монохромной обработкой.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/freedurov.jpg" alt="Плакат freedurov">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат • 2024</div>
+            <h3>freedurov</h3>
+            <p>Актуальный постер в циановой монохромной гамме с растровой текстурой экрана, крупным заголовком и текстовым блоком в нижней части.</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/Химера.jpg" alt="Плакат Химера — памяти Эдуарда «Рэтда» Старкова">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат • 2024</div>
+            <h3>Chimera / Химера</h3>
+            <p>Трибьют-плакат памяти Эдуарда «Рэтда» Старкова: зернистая тёмно-зелёная графика, фактурная типографика и знак петербургской группы «Химера».</p>
+          </div>
+        </article>
+
+        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            <img src="Работы/2024/RHCP плакат.jpg" alt="Плакат Anthony Kiedis — Red Hot Chili Peppers">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат • 2024</div>
+            <h3>Anthony Kiedis (RHCP)</h3>
+            <p>Концертный постер с вокалистом Red Hot Chili Peppers: кислотный дуотон, крупный растровый паттерн и плотная акцидентная типографика.</p>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Сообщение для года, в котором пока нет работ -->
+      <div class="projects-empty" id="projects-empty" hidden>
+        Работы за <span id="projects-empty-year"></span> год скоро появятся.
+      </div>
+    </section>
+  </main>
+
+  <!-- Кнопка «Наверх» -->
+  <button class="scroll-top-btn" id="scroll-top-btn" type="button" aria-label="Вернуться в начало страницы">↑ Наверх</button>
+
+  <!-- Модальное окно полноразмерного просмотра работы -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="lightbox-counter" id="lightbox-counter"></div>
+    <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Закрыть">Закрыть ✕</button>
+    <button class="lightbox-nav lightbox-prev" id="lightbox-prev" type="button" aria-label="Предыдущая работа">←</button>
+    <button class="lightbox-nav lightbox-next" id="lightbox-next" type="button" aria-label="Следующая работа">→</button>
+
+    <div class="lightbox-inner">
+      <div class="lightbox-stage" id="lightbox-stage">
+        <div class="lightbox-media" id="lightbox-media"></div>
+      </div>
+      <div class="lightbox-caption">
+        <span class="lightbox-zoom-tip" id="lightbox-zoom-tip">Нажми дважды, чтобы увеличить работу</span>
+        <span class="lightbox-meta" id="lightbox-meta"></span>
+        <h3 class="lightbox-title" id="lightbox-title"></h3>
+        <p class="lightbox-desc" id="lightbox-desc"></p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="page-content">
+    <div class="container footer-inner">
+      <span id="footer-copy">© 2026 кункови.ру</span>
+      <a href="index.html" class="footer-back">← На главную</a>
+    </div>
+  </footer>
+
+</body>
+</html>
