@@ -1,11 +1,10 @@
-/* Подключение шрифта DIN Pro Condensed */
+/* Подключение локальных шрифтов из отдельного репозитория cl1806.github.io/kunkovy-fonts/ */
 @font-face {
   font-family: 'DIN Pro';
   src: local('DIN Pro Condensed'),
-       local('DINPro-Cond'),
-       url('fonts/DINPro-Cond.woff2') format('woff2'),
-       url('fonts/DINPro-Cond.woff') format('woff'),
-       url('fonts/DINPro-Cond.ttf') format('truetype');
+       local('dinpro_condensedregular'),
+       url('https://cl1806.github.io/fonts/dinpro_condensedregular.otf') format('otf'),
+       url('fonts/dinpro_condensedregular.otf') format('otf');
   font-weight: 400;
   font-style: normal;
   font-stretch: condensed;
@@ -15,10 +14,9 @@
 @font-face {
   font-family: 'DIN Pro';
   src: local('DIN Pro Condensed Medium'),
-       local('DINPro-CondMedium'),
-       url('fonts/DINPro-CondMedium.woff2') format('woff2'),
-       url('fonts/DINPro-CondMedium.woff') format('woff'),
-       url('fonts/DINPro-CondMedium.ttf') format('truetype');
+       local('dinpro_condensedmedium'),
+       url('https://cl1806.github.io/fonts/dinpro_condensedmedium.otf') format('otf'),
+       url('fonts/dinpro_condensedmedium.otf') format('otf');
   font-weight: 500;
   font-style: normal;
   font-stretch: condensed;
@@ -28,11 +26,10 @@
 @font-face {
   font-family: 'DIN Pro';
   src: local('DIN Pro Condensed Bold'),
-       local('DINPro-CondBold'),
-       url('fonts/DINPro-CondBold.woff2') format('woff2'),
-       url('fonts/DINPro-CondBold.woff') format('woff'),
-       url('fonts/DINPro-CondBold.ttf') format('truetype');
-  font-weight: 700;
+       local('dinpro_condensedbold'),
+       url('https://cl1806.github.io/fonts/dinpro_condensedbold.otf') format('otf'),
+       url('fonts/dinpro_condensedbold.otf') format('otf');
+  font-weight: 600 700;
   font-style: normal;
   font-stretch: condensed;
   font-display: swap;
@@ -60,6 +57,7 @@
 html {
   scroll-behavior: smooth;
   background-color: var(--bg);
+  overflow-x: hidden;
 }
 
 html.is-loading body {
@@ -71,7 +69,7 @@ html.no-preloader .preloader {
 }
 
 body {
-  font-family: 'DIN Pro', 'DIN Pro Condensed', 'DIN Condensed', 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  font-family: 'DIN Pro', 'DIN Pro Condensed', 'Sofia Sans Condensed', 'PT Sans Narrow', 'Arial Narrow', sans-serif;
   font-stretch: condensed;
   background-color: var(--bg);
   color: var(--text-main);
@@ -79,6 +77,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -157,6 +156,7 @@ html.is-page-leaving .page-content {
 
 .header-nav {
   margin-top: 10px;
+  width: 100%;
 }
 
 .nav-links {
@@ -997,7 +997,7 @@ html.is-loading .marquee-track,
   border: 1px solid var(--border);
   backdrop-filter: blur(10px);
   padding: 8px 18px;
-  border-radius: 999px;
+  border-radius: 10px;
   pointer-events: none;
 }
 
@@ -1247,20 +1247,37 @@ footer {
   font-variant-numeric: tabular-nums;
 }
 
-/* Адаптив для планшетов и смартфонов */
+/* Полная адаптация под планшеты и смартфоны */
 @media (max-width: 768px) {
   .container {
     padding: 0 16px;
   }
 
-  .about-layout {
-    grid-template-columns: 1fr;
-    gap: 36px;
+  .site-header {
+    padding: 12px 0 11px;
   }
 
-  /* Главный экран на телефоне: кнопки видны сразу без прокрутки, лента работ читается чётче */
+  .logo img {
+    height: 34px;
+  }
+
+  .header-nav {
+    margin-top: 8px;
+  }
+
+  /* Меню строго в одну строку без переноса «Обо мне» */
+  .nav-links {
+    gap: 18px;
+  }
+
+  .nav-links a {
+    font-size: 0.98rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* Главный экран на телефоне: обе кнопки сразу видны без прокрутки */
   .hero {
-    padding: 36px 0 38px;
+    padding: 34px 0 38px;
   }
 
   .hero-tag {
@@ -1269,7 +1286,7 @@ footer {
   }
 
   .hero h1 {
-    font-size: clamp(2rem, 8.2vw, 2.75rem);
+    font-size: clamp(2.05rem, 8.4vw, 2.8rem);
     margin-bottom: 14px;
   }
 
@@ -1278,9 +1295,14 @@ footer {
     margin-bottom: 22px;
   }
 
+  .hero-actions {
+    width: 100%;
+    gap: 10px;
+  }
+
   .hero-actions .btn {
-    padding: 10px 22px;
-    font-size: 0.95rem;
+    padding: 11px 22px;
+    font-size: 0.96rem;
   }
 
   .marquee-row {
@@ -1298,20 +1320,81 @@ footer {
     height: 145px;
   }
 
+  /* Списки разделов и контактов */
+  .directory-section {
+    padding: 14px 0 56px;
+  }
+
   .directory-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
+    padding: 18px 8px;
   }
 
-  /* Меню в одну строку без переноса «Обо мне» */
-  .nav-links {
-    gap: 16px;
+  .directory-left {
+    gap: 12px;
   }
 
-  .nav-links a {
-    font-size: 0.96rem;
-    letter-spacing: 0.05em;
+  .directory-name {
+    font-size: 1.5rem;
+  }
+
+  .directory-desc {
+    font-size: 0.98rem;
+  }
+
+  /* Заголовки внутренних страниц */
+  .page-head {
+    padding: 32px 0 22px;
+  }
+
+  .page-title {
+    font-size: clamp(1.95rem, 7.6vw, 2.6rem);
+  }
+
+  .page-body {
+    padding: 24px 0 64px;
+  }
+
+  /* Фильтры и сетка работ без горизонтального вылета */
+  .year-filters {
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  .filter-btn {
+    padding: 7px 14px;
+    font-size: 0.95rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .project-info {
+    padding: 18px;
+  }
+
+  .project-info h3 {
+    font-size: 1.35rem;
+  }
+
+  .project-info p {
+    font-size: 1rem;
+  }
+
+  /* Обо мне и Контакты */
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .about-text p,
+  .contact-lead {
+    font-size: 1.1rem;
+    margin-bottom: 24px;
   }
 
   .scroll-top-btn {
@@ -1321,15 +1404,15 @@ footer {
     font-size: 0.95rem;
   }
 
-  /* Верхняя панель Lightbox без наложения текста */
+  /* Просмотр работы на телефоне (Lightbox) */
   .lightbox {
-    padding: 16px;
+    padding: 14px;
   }
 
   .lightbox-counter {
-    top: 12px;
+    top: max(12px, env(safe-area-inset-top));
     left: 12px;
-    max-width: calc(100vw - 118px);
+    max-width: calc(100vw - 116px);
     padding: 6px 10px;
     font-size: 0.8rem;
     letter-spacing: 0.04em;
@@ -1339,7 +1422,7 @@ footer {
   }
 
   .lightbox-close {
-    top: 12px;
+    top: max(12px, env(safe-area-inset-top));
     right: 12px;
     padding: 6px 10px;
     font-size: 0.8rem;
@@ -1347,9 +1430,34 @@ footer {
     white-space: nowrap;
   }
 
-  /* Компактная прямоугольная подсказка при зуме на телефоне */
+  .lightbox-media img {
+    max-width: 92vw;
+    max-height: 62vh;
+  }
+
+  .lightbox.is-zoomed .lightbox-media img {
+    max-width: 98vw;
+    max-height: 88vh;
+  }
+
+  .lightbox-caption {
+    max-width: 92vw;
+  }
+
+  .lightbox-zoom-tip {
+    font-size: 0.78rem;
+  }
+
+  .lightbox-title {
+    font-size: 1.3rem;
+  }
+
+  .lightbox-desc {
+    font-size: 0.96rem;
+  }
+
   .lightbox.is-zoomed .lightbox-caption {
-    bottom: 14px;
+    bottom: max(14px, env(safe-area-inset-bottom));
     width: calc(100vw - 24px);
     max-width: 360px;
     padding: 7px 12px;
@@ -1363,7 +1471,6 @@ footer {
     letter-spacing: 0.04em;
   }
 
-  /* Компактные полупрозрачные стрелки у краёв экрана */
   .lightbox-nav {
     width: 34px;
     height: 34px;
@@ -1381,14 +1488,23 @@ footer {
   }
 }
 
-/* Для узких смартфонов (360–400px) */
+/* Для узких смартфонов (320–420px) */
 @media (max-width: 420px) {
   .nav-links {
-    gap: 11px;
+    gap: 12px;
   }
 
   .nav-links a {
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     letter-spacing: 0.04em;
+  }
+
+  .hero h1 {
+    font-size: 1.95rem;
+  }
+
+  .hero-actions .btn {
+    padding: 10px 18px;
+    font-size: 0.92rem;
   }
 }
