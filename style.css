@@ -169,6 +169,8 @@ html.is-page-leaving .page-content {
 
 .nav-links a {
   position: relative;
+  display: inline-block;
+  white-space: nowrap;
   text-decoration: none;
   color: var(--text-muted);
   font-size: 1.05rem;
@@ -1245,15 +1247,50 @@ footer {
   font-variant-numeric: tabular-nums;
 }
 
-/* Адаптив */
+/* Адаптив для планшетов и смартфонов */
 @media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+
   .about-layout {
     grid-template-columns: 1fr;
     gap: 36px;
   }
 
+  /* Главный экран на телефоне: кнопки видны сразу без прокрутки, лента работ читается чётче */
   .hero {
-    padding: 58px 0 50px;
+    padding: 36px 0 38px;
+  }
+
+  .hero-tag {
+    font-size: 0.82rem;
+    margin-bottom: 10px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 8.2vw, 2.75rem);
+    margin-bottom: 14px;
+  }
+
+  .hero p {
+    font-size: 1.05rem;
+    margin-bottom: 22px;
+  }
+
+  .hero-actions .btn {
+    padding: 10px 22px;
+    font-size: 0.95rem;
+  }
+
+  .marquee-row {
+    opacity: 0.48;
+  }
+
+  .hero-marquee-overlay {
+    background:
+      radial-gradient(ellipse at center, rgba(8, 8, 8, 0.56) 0%, rgba(8, 8, 8, 0.86) 78%, #080808 100%),
+      linear-gradient(to bottom, #080808 0%, rgba(8, 8, 8, 0.14) 18%, rgba(8, 8, 8, 0.14) 82%, #080808 100%);
   }
 
   .marquee-tile,
@@ -1267,8 +1304,14 @@ footer {
     gap: 6px;
   }
 
+  /* Меню в одну строку без переноса «Обо мне» */
   .nav-links {
-    gap: 20px;
+    gap: 16px;
+  }
+
+  .nav-links a {
+    font-size: 0.96rem;
+    letter-spacing: 0.05em;
   }
 
   .scroll-top-btn {
@@ -1278,39 +1321,74 @@ footer {
     font-size: 0.95rem;
   }
 
+  /* Верхняя панель Lightbox без наложения текста */
+  .lightbox {
+    padding: 16px;
+  }
+
   .lightbox-counter {
-    top: 14px;
-    left: 14px;
+    top: 12px;
+    left: 12px;
+    max-width: calc(100vw - 118px);
     padding: 6px 10px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .lightbox-close {
-    top: 14px;
-    right: 14px;
+    top: 12px;
+    right: 12px;
     padding: 6px 10px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
   }
 
+  /* Компактная прямоугольная подсказка при зуме на телефоне */
   .lightbox.is-zoomed .lightbox-caption {
-    bottom: 16px;
-    padding: 6px 14px;
+    bottom: 14px;
+    width: calc(100vw - 24px);
+    max-width: 360px;
+    padding: 7px 12px;
+    border-radius: 10px;
   }
 
   .lightbox.is-zoomed .lightbox-zoom-tip {
-    font-size: 0.78rem;
+    display: block;
+    font-size: 0.74rem;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
   }
 
+  /* Компактные полупрозрачные стрелки у краёв экрана */
   .lightbox-nav {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+    background: rgba(18, 18, 18, 0.72);
+    backdrop-filter: blur(6px);
   }
 
   .lightbox-prev {
-    left: 10px;
+    left: 6px;
   }
 
   .lightbox-next {
-    right: 10px;
+    right: 6px;
+  }
+}
+
+/* Для узких смартфонов (360–400px) */
+@media (max-width: 420px) {
+  .nav-links {
+    gap: 11px;
+  }
+
+  .nav-links a {
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
   }
 }
