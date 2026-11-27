@@ -395,7 +395,7 @@ function initApp() {
     });
   }
 
-  // 5. Полноразмерный просмотр работ и серий (Lightbox + зум + листание серии)
+  // 5. Полноразмерный просмотр работ и серий (Lightbox + зум + сквозное листание)
   const lightbox = document.getElementById('lightbox');
 
   if (projectsGrid && lightbox) {
@@ -541,7 +541,6 @@ function initApp() {
       const baseTitle = titleEl ? titleEl.textContent : '';
       const baseDesc = descEl ? descEl.textContent : '';
 
-      // Поддержка формата data-series="src1::Название 1|src2::Название 2"
       const seriesAttr = card.getAttribute('data-series');
       if (seriesAttr && seriesAttr.trim()) {
         const rawItems = seriesAttr.split('|').map((s) => s.trim()).filter(Boolean);
@@ -562,7 +561,6 @@ function initApp() {
         }
       }
 
-      // Резервная поддержка вложенного .series-slides
       const seriesNodes = Array.from(card.querySelectorAll('.series-slides > div'));
       if (seriesNodes.length > 0) {
         return seriesNodes.map((node) => ({
@@ -623,6 +621,7 @@ function initApp() {
         fullImg.src = slide.src;
         fullImg.alt = slide.alt || slide.title || '';
         fullImg.draggable = false;
+        fullImg.addEventListener('dragstart', (e) => e.preventDefault());
         lightboxMedia.appendChild(fullImg);
       } else {
         const fullPlaceholder = document.createElement('div');
@@ -661,19 +660,30 @@ function initApp() {
       document.body.style.overflow = '';
     }
 
+    // Сквозной переход назад: внутри серии по листам, с 1-го листа серии — к предыдущему проекту (на его последний лист)
     function showPrev() {
-      if (currentSeriesSlides.length > 1) {
+      visibleCards = getVisibleCards();
+      if (visibleCards.length === 0) return;
+
+      if (currentSeriesSlides.length > 1 && currentSlideIndex > 0) {
         renderLightbox(currentVisibleIndex, currentSlideIndex - 1);
       } else {
-        renderLightbox(currentVisibleIndex - 1, 0);
+        const prevCardIndex = (currentVisibleIndex - 1 + visibleCards.length) % visibleCards.length;
+        const prevSlides = extractCardSlides(visibleCards[prevCardIndex]);
+        renderLightbox(prevCardIndex, Math.max(0, prevSlides.length - 1));
       }
     }
 
+    // Сквозной переход вперёд: внутри серии по листам, после последнего листа — к следующему проекту (на 1-й лист)
     function showNext() {
-      if (currentSeriesSlides.length > 1) {
+      visibleCards = getVisibleCards();
+      if (visibleCards.length === 0) return;
+
+      if (currentSeriesSlides.length > 1 && currentSlideIndex < currentSeriesSlides.length - 1) {
         renderLightbox(currentVisibleIndex, currentSlideIndex + 1);
       } else {
-        renderLightbox(currentVisibleIndex + 1, 0);
+        const nextCardIndex = (currentVisibleIndex + 1) % visibleCards.length;
+        renderLightbox(nextCardIndex, 0);
       }
     }
 
@@ -1026,12 +1036,9 @@ function initApp() {
       ? `<button class="owner-card-remove" type="button" data-remove-id="${item.id}">Удалить ✕</button>`
       : '';
 
-    // Если добавлена серия работ
     if (Array.isArray(item.series) && item.series.length > 0) {
       const sheetsText = formatSheetsCount(item.series.length);
-      const hasCountInTitle = /\(\d+\s*лист/i.test(item.title);
-      const displayTitle = hasCountInTitle ? item.title : `${item.title} (${sheetsText})`;
-      const safeTitle = escapeHTML(displayTitle);
+      const safeTitle = escapeHTML(item.title);
       const coverSrc = encodeImagePath(item.year, item.series[0].filename);
 
       const seriesAttrValue = item.series
@@ -1042,10 +1049,10 @@ function initApp() {
         })
         .join('|');
 
-      return `<article class="project-card" data-year="${safeYear}" data-series="${escapeHTML(seriesAttrValue)}" ${item.id ? `data-custom-id="${item.id}"` : ''} tabindex="0" role="button" aria-label="Открыть серию работ ${safeTitle}">
+      return `<article class="project-card" data-year="${safeYear}" data-series="${escapeHTML(seriesAttrValue)}" ${item.id ? `data-custom-id="${item.id}"` : ''} tabindex="0" role="button" aria-label="Открыть серию работ ${safeTitle} (${sheetsText})">
           <div class="project-preview">
             ${removeBtnHTML}
-            <span class="series-badge">Серия • ${sheetsText}</span>
+            <span class="series-badge">Серия</span>
             <img src="${coverSrc}" alt="${safeTitle}" loading="lazy" decoding="async">
             <span class="preview-zoom-hint">Листать серию ↗</span>
           </div>
@@ -1057,7 +1064,6 @@ function initApp() {
         </article>`;
     }
 
-    // Одиночная работа
     const imgSrc = encodeImagePath(item.year, item.filename);
     const safeTitle = escapeHTML(item.title);
 
@@ -1261,7 +1267,6 @@ function initApp() {
       });
     }
 
-    // Массовый выбор файлов для серии работ
     if (ownerSeriesFilesInput) {
       ownerSeriesFilesInput.addEventListener('change', () => {
         const files = Array.from(ownerSeriesFilesInput.files || []);
@@ -1275,14 +1280,12 @@ function initApp() {
       });
     }
 
-    // Ручное добавление строки листа серии
     if (ownerSeriesAddRowBtn) {
       ownerSeriesAddRowBtn.addEventListener('click', () => {
         createSeriesSheetRow('', '');
       });
     }
 
-    // Управление порядком и удалением листов в списке серии
     if (ownerSeriesList) {
       ownerSeriesList.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-series-act]');
@@ -1376,7 +1379,6 @@ function initApp() {
           return;
         }
 
-        // Одиночная работа
         const filename = ownerFilenameInput.value.trim();
         if (!filename) return;
 
