@@ -20,6 +20,16 @@ function initApp() {
   const siteHeader = document.getElementById('site-header');
   let isBusy = false;
 
+  // Гарантируем наличие актуальной фавиконки в <head> на любой странице
+  if (!document.querySelector('link[rel="icon"][href*="v=3"]')) {
+    const icon32 = document.createElement('link');
+    icon32.rel = 'icon';
+    icon32.type = 'image/png';
+    icon32.sizes = '32x32';
+    icon32.href = 'Логотипы/favicon-32x32.png?v=3';
+    document.head.appendChild(icon32);
+  }
+
   // Плавное проявление контента после перехода между страницами
   if (root.classList.contains('is-page-entering')) {
     requestAnimationFrame(() => {
@@ -73,19 +83,24 @@ function initApp() {
     requestAnimationFrame(animateProgress);
   }
 
-  // Нажатие на логотип -> анимация процентов + переход на главную / обновление
+  // Нажатие на логотип -> анимация процентов + переход на корневой URL главной / обновление
   if (logoLink) {
     logoLink.addEventListener('click', (e) => {
       e.preventDefault();
       if (isBusy) return;
 
-      const targetHref = logoLink.getAttribute('href') || 'index.html';
-      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      const rawHref = logoLink.getAttribute('href') || './';
+      const targetHref = rawHref === 'index.html' ? './' : rawHref;
+      const pathname = window.location.pathname;
+      const isHomePage =
+        pathname.endsWith('/') ||
+        pathname.endsWith('/index.html') ||
+        pathname === 'index.html';
 
       window.name = 'nav:logo';
 
       runLoader(950, () => {
-        if (currentPage === targetHref) {
+        if (isHomePage && (targetHref === './' || targetHref === 'index.html')) {
           window.location.reload();
         } else {
           window.location.href = targetHref;
@@ -124,7 +139,7 @@ function initApp() {
     });
   });
 
-  // Оптимизация зацикленной ленты работ на главной странице (отложенное декодирование малыми партиями)
+  // Оптимизация зацикленной ленты работ на главной странице
   const heroSection = document.getElementById('hero-section');
   const heroMarquee = document.getElementById('hero-marquee');
   const marqueeTrack1 = document.getElementById('marquee-track-1');
@@ -244,7 +259,6 @@ function initApp() {
     const tasks1 = prepareMarqueeTrack(marqueeTrack1, sources1);
     const tasks2 = prepareMarqueeTrack(marqueeTrack2, sources2);
 
-    // Чередуем задачи из верхней и нижней полос, чтобы обе заполнялись равномерно
     const interleaved = [];
     const maxLen = Math.max(tasks1.length, tasks2.length);
     for (let i = 0; i < maxLen; i++) {
@@ -267,7 +281,6 @@ function initApp() {
     }
   }
 
-  // Запускаем прелоадер и только после его завершения инициализируем фоновую ленту
   if (root.classList.contains('is-loading')) {
     runLoader(1000, () => {
       if (preloader) preloader.classList.add('is-hidden');
