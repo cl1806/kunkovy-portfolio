@@ -249,9 +249,12 @@ function initApp() {
       const customWorks = rawWorks ? JSON.parse(rawWorks) : [];
       if (customWorks.length > 0) {
         const customSources = customWorks.map((item) => {
-          const cleanName = String(item.filename || '').trim().replace(/^Работы\/\d{4}\//i, '');
+          const coverFile = Array.isArray(item.series) && item.series.length > 0
+            ? item.series[0].filename
+            : item.filename;
+          const cleanName = String(coverFile || '').trim().replace(/^Работы\/\d{4}\//i, '');
           return `Работы/${item.year}/${cleanName.replace(/#/g, '%23')}`;
-        });
+        }).filter(Boolean);
         sources1 = [...customSources.reverse(), ...sources1];
       }
     } catch (e) {}
@@ -410,6 +413,10 @@ function initApp() {
     const lightboxTitle = document.getElementById('lightbox-title');
     const lightboxDesc = document.getElementById('lightbox-desc');
     const lightboxZoomTip = document.getElementById('lightbox-zoom-tip');
+    const lightboxSeriesBar = document.getElementById('lightbox-series-bar');
+    const seriesPrevBtn = document.getElementById('series-prev-btn');
+    const seriesNextBtn = document.getElementById('series-next-btn');
+    const seriesLabel = document.getElementById('series-label');
     const closeBtn = document.getElementById('lightbox-close');
     const prevBtn = document.getElementById('lightbox-prev');
     const nextBtn = document.getElementById('lightbox-next');
@@ -527,31 +534,55 @@ function initApp() {
     }
 
     function extractCardSlides(card) {
-      const seriesNodes = Array.from(card.querySelectorAll('.series-slides > div'));
       const metaEl = card.querySelector('.project-meta');
+      const titleEl = card.querySelector('h3');
+      const descEl = card.querySelector('p');
       const baseMeta = metaEl ? metaEl.textContent : '';
+      const baseTitle = titleEl ? titleEl.textContent : '';
+      const baseDesc = descEl ? descEl.textContent : '';
 
+      // Поддержка формата data-series="src1::Название 1|src2::Название 2"
+      const seriesAttr = card.getAttribute('data-series');
+      if (seriesAttr && seriesAttr.trim()) {
+        const rawItems = seriesAttr.split('|').map((s) => s.trim()).filter(Boolean);
+        if (rawItems.length > 0) {
+          return rawItems.map((entry, idx) => {
+            const parts = entry.split('::');
+            const src = (parts[0] || '').trim();
+            const slideTitle = (parts[1] || '').trim() || `${baseTitle} (${idx + 1}/${rawItems.length})`;
+            const slideDesc = (parts[2] || '').trim() || baseDesc;
+            return {
+              src,
+              alt: slideTitle,
+              meta: baseMeta,
+              title: slideTitle,
+              desc: slideDesc
+            };
+          });
+        }
+      }
+
+      // Резервная поддержка вложенного .series-slides
+      const seriesNodes = Array.from(card.querySelectorAll('.series-slides > div'));
       if (seriesNodes.length > 0) {
         return seriesNodes.map((node) => ({
           src: node.getAttribute('data-src'),
           meta: baseMeta,
-          title: node.getAttribute('data-title') || '',
-          desc: node.getAttribute('data-desc') || ''
+          title: node.getAttribute('data-title') || baseTitle,
+          desc: node.getAttribute('data-desc') || baseDesc
         }));
       }
 
       const img = card.querySelector('.project-preview img');
       const placeholder = card.querySelector('.preview-placeholder');
-      const title = card.querySelector('h3');
-      const desc = card.querySelector('p');
 
       return [{
         src: img ? img.getAttribute('src') : '',
         alt: img ? img.alt : '',
         placeholder: placeholder ? placeholder.textContent : 'Превью работы',
         meta: baseMeta,
-        title: title ? title.textContent : '',
-        desc: desc ? desc.textContent : ''
+        title: baseTitle,
+        desc: baseDesc
       }];
     }
 
@@ -574,10 +605,15 @@ function initApp() {
 
       if (currentSeriesSlides.length > 1) {
         lightboxCounter.textContent = `Серия: лист ${currentSlideIndex + 1} / ${currentSeriesSlides.length}`;
-      } else if (activeYear === 'all') {
-        lightboxCounter.textContent = `${currentPos} / ${totalAll} • Проектов: ${totalAll}`;
+        if (lightboxSeriesBar) lightboxSeriesBar.hidden = false;
+        if (seriesLabel) seriesLabel.textContent = `Лист ${currentSlideIndex + 1} / ${currentSeriesSlides.length}`;
       } else {
-        lightboxCounter.textContent = `${currentPos} / ${visibleTotal} (${activeYear}) • Проектов: ${totalAll}`;
+        if (lightboxSeriesBar) lightboxSeriesBar.hidden = true;
+        if (activeYear === 'all') {
+          lightboxCounter.textContent = `${currentPos} / ${totalAll} • Проектов: ${totalAll}`;
+        } else {
+          lightboxCounter.textContent = `${currentPos} / ${visibleTotal} (${activeYear}) • Проектов: ${totalAll}`;
+        }
       }
 
       lightboxMedia.innerHTML = '';
@@ -619,6 +655,7 @@ function initApp() {
       resetZoom();
       currentSeriesSlides = [];
       currentSlideIndex = 0;
+      if (lightboxSeriesBar) lightboxSeriesBar.hidden = true;
       lightbox.classList.remove('is-open');
       lightbox.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
@@ -830,7 +867,6 @@ function initApp() {
           if (e.changedTouches.length !== 1) return;
           const touch = e.changedTouches[0];
 
-          // Горизонтальный свайп для перелистывания работы / листа серии при обычном масштабе
           if (touchMoved && zoomScale <= 1.02) {
             const dx = touch.clientX - swipeStartX;
             const dy = touch.clientY - swipeStartY;
@@ -859,6 +895,20 @@ function initApp() {
         },
         { passive: false }
       );
+    }
+
+    if (seriesPrevBtn) {
+      seriesPrevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPrev();
+      });
+    }
+
+    if (seriesNextBtn) {
+      seriesNextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showNext();
+      });
     }
 
     if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
@@ -892,26 +942,52 @@ function initApp() {
     });
   }
 
-  // 6. Скрытый режим владельца с плавным появлением и скрытием панели
+  // 6. Скрытый режим владельца (одиночные работы и серии работ)
   const ownerPanel = document.getElementById('owner-panel');
+  const ownerPanelTitle = document.getElementById('owner-panel-title');
   const ownerForm = document.getElementById('owner-form');
   const ownerExitBtn = document.getElementById('owner-exit-btn');
+  const ownerModeBtns = Array.from(document.querySelectorAll('.owner-mode-btn'));
   const ownerYearSelect = document.getElementById('owner-year');
   const ownerFolderYear = document.getElementById('owner-folder-year');
+  const ownerSeriesFolderYear = document.getElementById('owner-series-folder-year');
   const ownerHintYear = document.getElementById('owner-hint-year');
   const ownerCategoryInput = document.getElementById('owner-category');
+  const ownerTitleLabel = document.getElementById('owner-title-label');
   const ownerTitleInput = document.getElementById('owner-title');
+  const ownerSingleFileField = document.getElementById('owner-single-file-field');
   const ownerFilenameInput = document.getElementById('owner-filename');
   const ownerFileInput = document.getElementById('owner-file-input');
+  const ownerSeriesBox = document.getElementById('owner-series-box');
+  const ownerSeriesFilesInput = document.getElementById('owner-series-files-input');
+  const ownerSeriesAddRowBtn = document.getElementById('owner-series-add-row');
+  const ownerSeriesList = document.getElementById('owner-series-list');
+  const ownerDescLabel = document.getElementById('owner-desc-label');
   const ownerDescInput = document.getElementById('owner-desc');
+  const ownerSubmitBtn = document.getElementById('owner-submit-btn');
   const ownerDownloadBtn = document.getElementById('owner-download-html');
   const ownerCopyBtn = document.getElementById('owner-copy-code');
   const ownerStatus = document.getElementById('owner-status');
   const footerCopy = document.getElementById('footer-copy');
   const STORAGE_KEY_ADMIN = 'kunkovy_owner_mode';
   const STORAGE_KEY_WORKS = 'kunkovy_custom_works';
+  let ownerPublishMode = 'single'; // 'single' | 'series'
   let lastGeneratedCardHTML = '';
   let ownerHideTimer = null;
+
+  function formatSheetsCount(count) {
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    if (mod10 === 1 && mod100 !== 11) return `${count} лист`;
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return `${count} листа`;
+    return `${count} листов`;
+  }
+
+  function cleanSheetTitleFromFilename(filename) {
+    return String(filename || '')
+      .replace(/\.[^/.]+$/, '')
+      .trim();
+  }
 
   function getSavedCustomWorks() {
     try {
@@ -929,7 +1005,7 @@ function initApp() {
   }
 
   function encodeImagePath(year, filename) {
-    const cleanName = filename.trim().replace(/^Работы\/\d{4}\//i, '');
+    const cleanName = String(filename || '').trim().replace(/^Работы\/\d{4}\//i, '');
     const safeName = cleanName.replace(/#/g, '%23');
     return `Работы/${year}/${safeName}`;
   }
@@ -943,15 +1019,47 @@ function initApp() {
   }
 
   function buildCardMarkup(item, isOwnerVisible) {
-    const imgSrc = encodeImagePath(item.year, item.filename);
-    const safeTitle = escapeHTML(item.title);
     const safeCategory = escapeHTML(item.category);
     const safeDesc = escapeHTML(item.desc);
     const safeYear = escapeHTML(item.year);
-
     const removeBtnHTML = isOwnerVisible && item.id
       ? `<button class="owner-card-remove" type="button" data-remove-id="${item.id}">Удалить ✕</button>`
       : '';
+
+    // Если добавлена серия работ
+    if (Array.isArray(item.series) && item.series.length > 0) {
+      const sheetsText = formatSheetsCount(item.series.length);
+      const hasCountInTitle = /\(\d+\s*лист/i.test(item.title);
+      const displayTitle = hasCountInTitle ? item.title : `${item.title} (${sheetsText})`;
+      const safeTitle = escapeHTML(displayTitle);
+      const coverSrc = encodeImagePath(item.year, item.series[0].filename);
+
+      const seriesAttrValue = item.series
+        .map((sheet, idx) => {
+          const sheetPath = encodeImagePath(item.year, sheet.filename);
+          const sheetTitle = (sheet.title || '').trim() || `Лист ${idx + 1}`;
+          return `${sheetPath}::${sheetTitle}`;
+        })
+        .join('|');
+
+      return `<article class="project-card" data-year="${safeYear}" data-series="${escapeHTML(seriesAttrValue)}" ${item.id ? `data-custom-id="${item.id}"` : ''} tabindex="0" role="button" aria-label="Открыть серию работ ${safeTitle}">
+          <div class="project-preview">
+            ${removeBtnHTML}
+            <span class="series-badge">Серия • ${sheetsText}</span>
+            <img src="${coverSrc}" alt="${safeTitle}" loading="lazy" decoding="async">
+            <span class="preview-zoom-hint">Листать серию ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">${safeCategory} • ${safeYear}</div>
+            <h3>${safeTitle}</h3>
+            <p>${safeDesc}</p>
+          </div>
+        </article>`;
+    }
+
+    // Одиночная работа
+    const imgSrc = encodeImagePath(item.year, item.filename);
+    const safeTitle = escapeHTML(item.title);
 
     return `<article class="project-card" data-year="${safeYear}" ${item.id ? `data-custom-id="${item.id}"` : ''} tabindex="0" role="button" aria-label="Открыть работу в полном размере">
           <div class="project-preview">
@@ -982,6 +1090,70 @@ function initApp() {
     });
 
     applyYearFilter(activeYear);
+  }
+
+  function updateSeriesRowNumbers() {
+    if (!ownerSeriesList) return;
+    Array.from(ownerSeriesList.querySelectorAll('.owner-series-item')).forEach((row, idx) => {
+      const numEl = row.querySelector('.owner-series-num');
+      if (numEl) numEl.textContent = String(idx + 1);
+    });
+  }
+
+  function createSeriesSheetRow(filename = '', title = '') {
+    if (!ownerSeriesList) return;
+    const row = document.createElement('div');
+    row.className = 'owner-series-item';
+    row.innerHTML = `
+      <span class="owner-series-num">1</span>
+      <input type="text" class="series-item-file" value="${escapeHTML(filename)}" placeholder="Имя файла.jpg">
+      <input type="text" class="series-item-title" value="${escapeHTML(title)}" placeholder="Название листа (например: Лист 1)">
+      <div class="owner-series-item-actions">
+        <button type="button" class="owner-series-mini-btn" data-series-act="up" title="Выше">↑</button>
+        <button type="button" class="owner-series-mini-btn" data-series-act="down" title="Ниже">↓</button>
+        <button type="button" class="owner-series-mini-btn owner-series-mini-btn--del" data-series-act="remove" title="Удалить лист">✕</button>
+      </div>
+    `;
+    ownerSeriesList.appendChild(row);
+    updateSeriesRowNumbers();
+  }
+
+  function setOwnerPublishMode(mode) {
+    ownerPublishMode = mode === 'series' ? 'series' : 'single';
+    const isSeries = ownerPublishMode === 'series';
+
+    ownerModeBtns.forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset.ownerMode === ownerPublishMode);
+    });
+
+    if (ownerPanelTitle) {
+      ownerPanelTitle.textContent = isSeries ? 'Добавить серию работ' : 'Добавить новую работу';
+    }
+    if (ownerTitleLabel) {
+      ownerTitleLabel.textContent = isSeries ? 'Название серии' : 'Название работы';
+    }
+    if (ownerTitleInput) {
+      ownerTitleInput.placeholder = isSeries ? 'Например: Серия «Метро»' : 'Например: Новый плакат';
+    }
+    if (ownerDescLabel) {
+      ownerDescLabel.textContent = isSeries ? 'Описание серии' : 'Описание работы';
+    }
+    if (ownerSubmitBtn) {
+      ownerSubmitBtn.textContent = isSeries ? 'Добавить серию' : 'Добавить работу';
+    }
+
+    if (ownerCategoryInput) {
+      const val = ownerCategoryInput.value.trim();
+      if (isSeries && (val === '' || val === 'Плакат')) {
+        ownerCategoryInput.value = 'Серия плакатов';
+      } else if (!isSeries && (val === '' || val === 'Серия плакатов')) {
+        ownerCategoryInput.value = 'Плакат';
+      }
+    }
+
+    if (ownerSingleFileField) ownerSingleFileField.hidden = isSeries;
+    if (ownerFilenameInput) ownerFilenameInput.required = !isSeries;
+    if (ownerSeriesBox) ownerSeriesBox.hidden = !isSeries;
   }
 
   function setOwnerMode(enabled, shouldScroll = false) {
@@ -1031,6 +1203,12 @@ function initApp() {
       renderStoredWorks(false);
     }
 
+    ownerModeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        setOwnerPublishMode(btn.dataset.ownerMode);
+      });
+    });
+
     if (footerCopy) {
       let clickCount = 0;
       let clickTimer = null;
@@ -1069,6 +1247,7 @@ function initApp() {
       ownerYearSelect.addEventListener('change', () => {
         const y = ownerYearSelect.value;
         if (ownerFolderYear) ownerFolderYear.textContent = y;
+        if (ownerSeriesFolderYear) ownerSeriesFolderYear.textContent = y;
         if (ownerHintYear) ownerHintYear.textContent = y;
       });
     }
@@ -1078,6 +1257,49 @@ function initApp() {
         const file = ownerFileInput.files && ownerFileInput.files[0];
         if (file) {
           ownerFilenameInput.value = file.name;
+        }
+      });
+    }
+
+    // Массовый выбор файлов для серии работ
+    if (ownerSeriesFilesInput) {
+      ownerSeriesFilesInput.addEventListener('change', () => {
+        const files = Array.from(ownerSeriesFilesInput.files || []);
+        if (files.length === 0) return;
+
+        files.forEach((file) => {
+          createSeriesSheetRow(file.name, cleanSheetTitleFromFilename(file.name));
+        });
+
+        ownerSeriesFilesInput.value = '';
+      });
+    }
+
+    // Ручное добавление строки листа серии
+    if (ownerSeriesAddRowBtn) {
+      ownerSeriesAddRowBtn.addEventListener('click', () => {
+        createSeriesSheetRow('', '');
+      });
+    }
+
+    // Управление порядком и удалением листов в списке серии
+    if (ownerSeriesList) {
+      ownerSeriesList.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-series-act]');
+        if (!btn) return;
+        const row = btn.closest('.owner-series-item');
+        if (!row) return;
+
+        const act = btn.dataset.seriesAct;
+        if (act === 'remove') {
+          row.remove();
+          updateSeriesRowNumbers();
+        } else if (act === 'up' && row.previousElementSibling) {
+          ownerSeriesList.insertBefore(row, row.previousElementSibling);
+          updateSeriesRowNumbers();
+        } else if (act === 'down' && row.nextElementSibling) {
+          ownerSeriesList.insertBefore(row.nextElementSibling, row);
+          updateSeriesRowNumbers();
         }
       });
     }
@@ -1100,16 +1322,72 @@ function initApp() {
       ownerForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        const year = ownerYearSelect.value;
+        const category = ownerCategoryInput.value.trim() || (ownerPublishMode === 'series' ? 'Серия плакатов' : 'Плакат');
+        const title = ownerTitleInput.value.trim();
+        const desc = ownerDescInput.value.trim();
+
+        if (!title || !desc) return;
+
+        if (ownerPublishMode === 'series') {
+          const rows = ownerSeriesList ? Array.from(ownerSeriesList.querySelectorAll('.owner-series-item')) : [];
+          const sheets = rows
+            .map((row, idx) => {
+              const fileVal = (row.querySelector('.series-item-file')?.value || '').trim();
+              const titleVal = (row.querySelector('.series-item-title')?.value || '').trim();
+              if (!fileVal) return null;
+              return {
+                filename: fileVal,
+                title: titleVal || cleanSheetTitleFromFilename(fileVal) || `Лист ${idx + 1}`
+              };
+            })
+            .filter(Boolean);
+
+          if (sheets.length < 2) {
+            if (ownerStatus) {
+              ownerStatus.innerHTML = 'Для серии добавьте минимум <strong>2 листа</strong> (выберите файлы или нажмите «+ Добавить лист»).';
+            }
+            return;
+          }
+
+          const newSeriesItem = {
+            id: Date.now(),
+            year,
+            category,
+            title,
+            desc,
+            series: sheets
+          };
+
+          const currentWorks = getSavedCustomWorks();
+          currentWorks.push(newSeriesItem);
+          saveCustomWorks(currentWorks);
+
+          lastGeneratedCardHTML = buildCardMarkup(newSeriesItem, false);
+          renderStoredWorks(true);
+
+          ownerTitleInput.value = '';
+          ownerDescInput.value = '';
+          if (ownerSeriesList) ownerSeriesList.innerHTML = '';
+
+          if (ownerStatus) {
+            ownerStatus.innerHTML = `Серия <strong>«${escapeHTML(title)}»</strong> (${formatSheetsCount(sheets.length)}) добавлена! Нажмите <strong>«Скачать обновлённый works.html»</strong> и замените файл в папке сайта.`;
+          }
+          return;
+        }
+
+        // Одиночная работа
+        const filename = ownerFilenameInput.value.trim();
+        if (!filename) return;
+
         const newItem = {
           id: Date.now(),
-          year: ownerYearSelect.value,
-          category: ownerCategoryInput.value.trim() || 'Плакат',
-          title: ownerTitleInput.value.trim(),
-          filename: ownerFilenameInput.value.trim(),
-          desc: ownerDescInput.value.trim()
+          year,
+          category,
+          title,
+          filename,
+          desc
         };
-
-        if (!newItem.title || !newItem.filename || !newItem.desc) return;
 
         const currentWorks = getSavedCustomWorks();
         currentWorks.push(newItem);
@@ -1155,6 +1433,19 @@ function initApp() {
           clonedPanel.hidden = true;
         }
 
+        const clonedSeriesList = clone.querySelector('#owner-series-list');
+        if (clonedSeriesList) clonedSeriesList.innerHTML = '';
+
+        const clonedSeriesBox = clone.querySelector('#owner-series-box');
+        if (clonedSeriesBox) clonedSeriesBox.hidden = true;
+
+        const clonedSingleField = clone.querySelector('#owner-single-file-field');
+        if (clonedSingleField) clonedSingleField.hidden = false;
+
+        clone.querySelectorAll('.owner-mode-btn').forEach((btn) => {
+          btn.classList.toggle('is-active', btn.dataset.ownerMode === 'single');
+        });
+
         clone.querySelectorAll('.owner-card-remove').forEach((btn) => btn.remove());
         clone.querySelectorAll('.project-card').forEach((card) => {
           card.classList.remove('is-hidden');
@@ -1176,6 +1467,9 @@ function initApp() {
           clonedLightbox.classList.remove('is-open', 'is-zoomed', 'is-dragging');
           clonedLightbox.setAttribute('aria-hidden', 'true');
         }
+
+        const clonedSeriesBar = clone.querySelector('#lightbox-series-bar');
+        if (clonedSeriesBar) clonedSeriesBar.hidden = true;
 
         const clonedMedia = clone.querySelector('#lightbox-media');
         if (clonedMedia) {
@@ -1211,7 +1505,7 @@ function initApp() {
           (works.length > 0 ? buildCardMarkup(works[works.length - 1], false) : '');
 
         if (!codeToCopy) {
-          if (ownerStatus) ownerStatus.textContent = 'Сначала добавьте работу через форму выше.';
+          if (ownerStatus) ownerStatus.textContent = 'Сначала добавьте работу или серию через форму выше.';
           return;
         }
 
