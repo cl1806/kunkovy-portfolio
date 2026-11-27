@@ -941,7 +941,6 @@ html.is-loading .marquee-track,
   letter-spacing: 0.04em;
 }
 
-/* Если включён режим владельца, сдвигаем плашку серии вправо, чтобы не наезжала на кнопку «Удалить ✕» */
 .project-card[data-custom-id] .owner-card-remove ~ .series-badge {
   left: auto;
   right: 12px;
@@ -1070,7 +1069,7 @@ html.is-loading .marquee-track,
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 58px 24px 18px;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1085,11 +1084,12 @@ html.is-loading .marquee-track,
 
 .lightbox-inner {
   max-width: 92vw;
-  max-height: 92vh;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 8px;
   opacity: 0;
   transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -1142,7 +1142,7 @@ html.is-loading .marquee-track,
 
 .lightbox-media img {
   max-width: 90vw;
-  max-height: 68vh;
+  max-height: 60vh;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -1159,7 +1159,7 @@ html.is-loading .marquee-track,
 
 .lightbox-placeholder {
   aspect-ratio: 4 / 5;
-  height: min(68vh, 640px);
+  height: min(60vh, 580px);
   max-width: 86vw;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -1177,10 +1177,10 @@ html.is-loading .marquee-track,
 .lightbox-series-bar {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 999px;
   z-index: 1004;
 }
@@ -1195,9 +1195,9 @@ html.is-loading .marquee-track,
   border: none;
   color: var(--text-main);
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   line-height: 1;
-  padding: 2px 6px;
+  padding: 2px 5px;
   cursor: pointer;
   transition: opacity 0.2s ease;
 }
@@ -1208,7 +1208,7 @@ html.is-loading .marquee-track,
 
 .series-label {
   font-family: var(--font-display);
-  font-size: 0.98rem;
+  font-size: 0.86rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1216,17 +1216,19 @@ html.is-loading .marquee-track,
   font-variant-numeric: tabular-nums;
 }
 
+/* Компактная подпись к работе/листу серии — влезает целиком без обрезания */
 .lightbox-caption {
   text-align: center;
-  max-width: 620px;
+  max-width: 660px;
 }
 
 .lightbox-zoom-tip {
   display: inline-block;
   font-family: var(--font-body);
-  font-size: 0.82rem;
-  color: #b5b5b5;
-  margin-bottom: 6px;
+  font-size: 0.74rem;
+  line-height: 1.3;
+  color: #a8a8a8;
+  margin-bottom: 4px;
 }
 
 .lightbox.is-zoomed .lightbox-caption {
@@ -1240,13 +1242,14 @@ html.is-loading .marquee-track,
   background: rgba(12, 12, 12, 0.9);
   border: 1px solid var(--border);
   backdrop-filter: blur(10px);
-  padding: 8px 18px;
+  padding: 7px 16px;
   border-radius: 10px;
   pointer-events: none;
 }
 
 .lightbox.is-zoomed .lightbox-zoom-tip {
   margin-bottom: 0;
+  font-size: 0.78rem;
   color: var(--text-main);
 }
 
@@ -1259,16 +1262,18 @@ html.is-loading .marquee-track,
 .lightbox-meta {
   display: block;
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.82rem;
+  line-height: 1.2;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .lightbox-title {
   font-family: var(--font-display);
-  font-size: 1.55rem;
+  font-size: 1.25rem;
+  line-height: 1.15;
   font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 4px;
@@ -1276,24 +1281,24 @@ html.is-loading .marquee-track,
 
 .lightbox-desc {
   font-family: var(--font-body);
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: #b8b8b8;
 }
 
 /* Верхняя панель Lightbox */
 .lightbox-counter {
   position: fixed;
-  top: 20px;
+  top: 16px;
   left: 24px;
   background: rgba(18, 18, 18, 0.9);
   backdrop-filter: blur(8px);
   color: var(--text-main);
   border: 1px solid var(--border);
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: 6px;
   font-family: var(--font-display);
-  font-size: 1.02rem;
+  font-size: 0.95rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1303,16 +1308,16 @@ html.is-loading .marquee-track,
 
 .lightbox-close {
   position: fixed;
-  top: 20px;
+  top: 16px;
   right: 24px;
   background: rgba(18, 18, 18, 0.9);
   backdrop-filter: blur(8px);
   color: var(--text-main);
   border: 1px solid var(--border);
-  padding: 8px 16px;
+  padding: 7px 14px;
   border-radius: 6px;
   font-family: var(--font-display);
-  font-size: 1.02rem;
+  font-size: 0.95rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1648,7 +1653,7 @@ footer {
   }
 
   .lightbox {
-    padding: 14px;
+    padding: 50px 14px 14px;
   }
 
   .lightbox-counter {
@@ -1672,7 +1677,7 @@ footer {
 
   .lightbox-media img {
     max-width: 92vw;
-    max-height: 58vh;
+    max-height: 53vh;
   }
 
   .lightbox.is-zoomed .lightbox-media img {
@@ -1685,15 +1690,22 @@ footer {
   }
 
   .lightbox-zoom-tip {
+    font-size: 0.7rem;
+    margin-bottom: 3px;
+  }
+
+  .lightbox-meta {
     font-size: 0.78rem;
   }
 
   .lightbox-title {
-    font-size: 1.32rem;
+    font-size: 1.12rem;
+    margin-bottom: 3px;
   }
 
   .lightbox-desc {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    line-height: 1.35;
   }
 
   .lightbox.is-zoomed .lightbox-caption {
@@ -1706,7 +1718,7 @@ footer {
 
   .lightbox.is-zoomed .lightbox-zoom-tip {
     display: block;
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     line-height: 1.3;
   }
 
