@@ -15,8 +15,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Sofia+Sans+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=4">
-  <script src="script.js?v=4"></script>
+  <link rel="stylesheet" href="style.css?v=5">
+  <script src="script.js?v=5"></script>
 </head>
 <body>
 
@@ -57,9 +57,15 @@
         <div class="owner-panel-head">
           <div>
             <span class="owner-badge">Режим владельца</span>
-            <h2 class="owner-panel-title">Добавить новую работу</h2>
+            <h2 class="owner-panel-title" id="owner-panel-title">Добавить новую работу</h2>
           </div>
           <button class="owner-exit-btn" id="owner-exit-btn" type="button">Выйти из режима ✕</button>
+        </div>
+
+        <!-- Переключатель режима: одиночная работа или серия -->
+        <div class="owner-mode-switch" role="group" aria-label="Формат публикации">
+          <button class="owner-mode-btn is-active" type="button" data-owner-mode="single">Одна работа</button>
+          <button class="owner-mode-btn" type="button" data-owner-mode="series">Серия работ</button>
         </div>
 
         <form class="owner-form" id="owner-form">
@@ -77,15 +83,16 @@
 
             <label class="owner-field">
               <span>Категория / тип</span>
-              <input type="text" id="owner-category" value="Плакат" placeholder="Например: Плакат или Айдентика" required>
+              <input type="text" id="owner-category" value="Плакат" placeholder="Например: Плакат или Серия плакатов" required>
             </label>
 
             <label class="owner-field">
-              <span>Название работы</span>
+              <span id="owner-title-label">Название работы</span>
               <input type="text" id="owner-title" placeholder="Например: Новый плакат" required>
             </label>
 
-            <label class="owner-field">
+            <!-- Поле файла для одиночной работы -->
+            <label class="owner-field" id="owner-single-file-field">
               <span>Файл в папке Работы/<span id="owner-folder-year">2026</span>/</span>
               <div class="owner-file-row">
                 <input type="text" id="owner-filename" placeholder="Имя файла.jpg" required>
@@ -97,17 +104,33 @@
             </label>
           </div>
 
+          <!-- Блок выбора и настройки листов для серии работ -->
+          <div class="owner-series-box" id="owner-series-box" hidden>
+            <div class="owner-series-toolbar">
+              <span class="owner-series-caption">Листы серии в папке <strong>Работы/<span id="owner-series-folder-year">2026</span>/</strong> (первый лист станет обложкой):</span>
+              <div class="owner-series-btns">
+                <label class="owner-file-pick">
+                  Выбрать файлы серии
+                  <input type="file" id="owner-series-files-input" accept="image/*" multiple hidden>
+                </label>
+                <button class="owner-file-pick" id="owner-series-add-row" type="button">+ Добавить лист</button>
+              </div>
+            </div>
+
+            <div class="owner-series-list" id="owner-series-list"></div>
+          </div>
+
           <label class="owner-field">
-            <span>Описание работы</span>
+            <span id="owner-desc-label">Описание работы</span>
             <textarea id="owner-desc" rows="2" placeholder="Краткое описание идеи, типографики и графики..." required></textarea>
           </label>
 
           <div class="owner-actions">
-            <button class="btn" type="submit">Добавить работу</button>
+            <button class="btn" id="owner-submit-btn" type="submit">Добавить работу</button>
             <button class="btn btn--outline" id="owner-download-html" type="button">Скачать обновлённый works.html</button>
             <button class="btn btn--outline" id="owner-copy-code" type="button">Скопировать код карточки</button>
           </div>
-          <p class="owner-hint" id="owner-status">Картинка должна лежать в папке <strong>Работы/<span id="owner-hint-year">2026</span>/</strong>. После добавления скачайте обновлённый <strong>works.html</strong> и замените им файл в папке сайта.</p>
+          <p class="owner-hint" id="owner-status">Картинки должны лежать в папке <strong>Работы/<span id="owner-hint-year">2026</span>/</strong>. После добавления скачайте обновлённый <strong>works.html</strong> и замените им файл в папке сайта.</p>
         </form>
       </div>
 
@@ -307,15 +330,17 @@
           </div>
         </article>
 
-        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+        <!-- Серия «Метро» (объединённые 3 листа) -->
+        <article class="project-card" data-year="2024" data-series="Работы/2024/Текстовое безумие 2024. Технологический институт.jpg::Технологический институт|Работы/2024/Проспект Ветеранов.jpg::Проспект Ветеранов|Работы/2024/Пушкинская.jpg::Пушкинская" tabindex="0" role="button" aria-label="Открыть серию плакатов Метро">
           <div class="project-preview">
-            <img src="Работы/2024/Текстовое безумие 2024. Технологический институт.jpg" alt="Плакат Технологический институт" loading="lazy" decoding="async">
-            <span class="preview-zoom-hint">Во весь экран ↗</span>
+            <span class="series-badge">Серия • 3 листа</span>
+            <img src="Работы/2024/Текстовое безумие 2024. Технологический институт.jpg" alt="Серия плакатов Метро (3 плаката)" loading="lazy" decoding="async">
+            <span class="preview-zoom-hint">Листать серию ↗</span>
           </div>
           <div class="project-info">
-            <div class="project-meta">Плакат / Серия «Метро» • 2024</div>
-            <h3>Технологический институт</h3>
-            <p>Плакат о кросс-платформенном узле петербургского метрополитена с акцидентной типографикой и градиентным тонированием.</p>
+            <div class="project-meta">Серия плакатов • 2024</div>
+            <h3>Серия «Метро»</h3>
+            <p>Серия плакатов о станциях петербургского метрополитена («Технологический институт», «Проспект Ветеранов», «Пушкинская») с акцидентной типографикой, тонированием и фактурной графикой.</p>
           </div>
         </article>
 
@@ -333,31 +358,7 @@
 
         <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
           <div class="project-preview">
-            <img src="Работы/2024/Проспект Ветеранов.jpg" alt="Плакат Проспект Ветеранов" loading="lazy" decoding="async">
-            <span class="preview-zoom-hint">Во весь экран ↗</span>
-          </div>
-          <div class="project-info">
-            <div class="project-meta">Плакат / Серия «Метро» • 2024</div>
-            <h3>Проспект Ветеранов</h3>
-            <p>Плакат о южной конечной станции первой линии с красной тонировкой барельефа и сочетанием антиквы с каллиграфическими росчерками.</p>
-          </div>
-        </article>
-
-        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
-          <div class="project-preview">
-            <img src="Работы/2024/Пушкинская.jpg" alt="Плакат Пушкинская" loading="lazy" decoding="async">
-            <span class="preview-zoom-hint">Во весь экран ↗</span>
-          </div>
-          <div class="project-info">
-            <div class="project-meta">Плакат / Серия «Метро» • 2024</div>
-            <h3>Пушкинская</h3>
-            <p>Плакат из серии о петербургском метрополитене с выразительной пластикой акцидентного шрифта и монохромной обработкой.</p>
-          </div>
-        </article>
-
-        <article class="project-card" data-year="2024" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
-          <div class="project-preview">
-            <img src="Работы/2024/%23freedurov.jpg" alt="Плакат freedurov" loading="lazy" decoding="async">
+            <img src="Работы/2024/freedurov.jpg" alt="Плакат freedurov" loading="lazy" decoding="async">
             <span class="preview-zoom-hint">Во весь экран ↗</span>
           </div>
           <div class="project-info">
