@@ -76,7 +76,6 @@ html.no-preloader .preloader {
   display: none !important;
 }
 
-/* Наборный текст — читаемый гротеск без сжатия и лишнего трекинга */
 body {
   font-family: var(--font-body);
   font-stretch: normal;
@@ -419,7 +418,7 @@ html.is-loading .marquee-track,
   background: var(--surface);
 }
 
-/* Список переходов на страницы (без 01/02/03) */
+/* Список переходов на страницы */
 .directory-section {
   padding: 24px 0 80px;
 }
@@ -511,7 +510,7 @@ html.is-loading .marquee-track,
   border-color: #383838;
   padding: 24px;
   margin-bottom: 32px;
-  max-height: 1100px;
+  max-height: 2200px;
   opacity: 1;
   transform: translateY(0) scale(1);
   pointer-events: all;
@@ -526,7 +525,7 @@ html.is-loading .marquee-track,
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
 }
@@ -571,6 +570,41 @@ html.is-loading .marquee-track,
   border-color: var(--text-main);
 }
 
+/* Переключатель режима: Одна работа / Серия работ */
+.owner-mode-switch {
+  display: inline-flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+
+.owner-mode-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.owner-mode-btn:hover {
+  color: var(--text-main);
+}
+
+.owner-mode-btn.is-active {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
 .owner-form {
   display: flex;
   flex-direction: column;
@@ -587,6 +621,11 @@ html.is-loading .marquee-track,
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.owner-field[hidden],
+.owner-series-box[hidden] {
+  display: none !important;
 }
 
 .owner-field > span {
@@ -631,7 +670,7 @@ html.is-loading .marquee-track,
   color: var(--text-main);
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 0 14px;
+  padding: 8px 14px;
   font-family: var(--font-display);
   font-size: 0.98rem;
   font-weight: 600;
@@ -639,11 +678,127 @@ html.is-loading .marquee-track,
   letter-spacing: 0.04em;
   cursor: pointer;
   white-space: nowrap;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .owner-file-pick:hover {
   border-color: var(--text-main);
+  background: #181818;
+}
+
+/* Блок добавления листов серии в режиме владельца */
+.owner-series-box {
+  background: rgba(8, 8, 8, 0.55);
+  border: 1px dashed #343434;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.owner-series-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.owner-series-caption {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+.owner-series-caption strong {
+  color: var(--text-main);
+}
+
+.owner-series-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.owner-series-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.owner-series-list:empty::before {
+  content: 'Нажмите «Выбрать файлы серии» (можно выделить сразу несколько картинок) или «+ Добавить лист».';
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  padding: 8px 4px;
+}
+
+.owner-series-item {
+  display: grid;
+  grid-template-columns: 32px 1fr 1fr auto;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.owner-series-num {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.owner-series-item input {
+  width: 100%;
+  background: var(--bg);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 7px 10px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.owner-series-item input:focus {
+  border-color: var(--text-main);
+}
+
+.owner-series-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.owner-series-mini-btn {
+  background: var(--bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.owner-series-mini-btn:hover {
+  color: var(--text-main);
+  border-color: var(--text-main);
+}
+
+.owner-series-mini-btn--del:hover {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
 }
 
 .owner-actions {
@@ -784,6 +939,12 @@ html.is-loading .marquee-track,
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+/* Если включён режим владельца, сдвигаем плашку серии вправо, чтобы не наезжала на кнопку «Удалить ✕» */
+.project-card[data-custom-id] .owner-card-remove ~ .series-badge {
+  left: auto;
+  right: 12px;
 }
 
 .preview-zoom-hint {
@@ -928,7 +1089,7 @@ html.is-loading .marquee-track,
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   opacity: 0;
   transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -981,7 +1142,7 @@ html.is-loading .marquee-track,
 
 .lightbox-media img {
   max-width: 90vw;
-  max-height: 73vh;
+  max-height: 68vh;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -998,7 +1159,7 @@ html.is-loading .marquee-track,
 
 .lightbox-placeholder {
   aspect-ratio: 4 / 5;
-  height: min(70vh, 660px);
+  height: min(68vh, 640px);
   max-width: 86vw;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -1010,6 +1171,49 @@ html.is-loading .marquee-track,
   font-size: 1.5rem;
   color: var(--text-muted);
   text-transform: uppercase;
+}
+
+/* Переключатель листов внутри серии */
+.lightbox-series-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 999px;
+  z-index: 1004;
+}
+
+.lightbox-series-bar[hidden],
+.lightbox.is-zoomed .lightbox-series-bar {
+  display: none !important;
+}
+
+.series-step-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 1;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.series-step-btn:hover {
+  opacity: 0.7;
+}
+
+.series-label {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
 }
 
 .lightbox-caption {
@@ -1159,7 +1363,7 @@ html.is-loading .marquee-track,
   right: 20px;
 }
 
-/* Обо мне (about.html) — чистая колонка с читаемой наборкой */
+/* Обо мне (about.html) */
 .about-single {
   max-width: 700px;
 }
@@ -1389,6 +1593,20 @@ footer {
     padding: 24px 0 64px;
   }
 
+  .owner-series-item {
+    grid-template-columns: 24px 1fr;
+    gap: 6px;
+  }
+
+  .owner-series-item input:nth-of-type(2) {
+    grid-column: 2;
+  }
+
+  .owner-series-item-actions {
+    grid-column: 2;
+    justify-content: flex-end;
+  }
+
   .year-filters {
     gap: 8px;
     margin-bottom: 22px;
@@ -1454,7 +1672,7 @@ footer {
 
   .lightbox-media img {
     max-width: 92vw;
-    max-height: 62vh;
+    max-height: 58vh;
   }
 
   .lightbox.is-zoomed .lightbox-media img {
