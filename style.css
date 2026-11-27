@@ -1,4 +1,4 @@
-/* Подключение акцидентного шрифта DIN Pro Condensed для заголовков и навигации */
+/* Подключение локальных шрифтов из отдельного репозитория cl1806.github.io/kunkovy-fonts/ */
 @font-face {
   font-family: 'DIN Pro';
   src: local('DIN Pro Condensed'),
@@ -76,7 +76,7 @@ html.no-preloader .preloader {
   display: none !important;
 }
 
-/* Наборный текст (параграфы, описания, формы) — нормальной ширины, без трекинга */
+/* Наборный текст — читаемый гротеск без сжатия и лишнего трекинга */
 body {
   font-family: var(--font-body);
   font-stretch: normal;
@@ -115,7 +115,7 @@ html.is-page-leaving .page-content {
   transform: translateY(10px);
 }
 
-/* Шапка сайта */
+/* Компактная шапка сайта */
 .site-header {
   padding: 16px 0 14px;
   border-bottom: 1px solid var(--border);
@@ -237,7 +237,7 @@ html:not(.is-loading) .reveal {
   animation: fadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) forwards;
 }
 
-/* Главный баннер с фоновой лентой работ */
+/* Главный баннер с оптимизированной зацикленной прокруткой работ на фоне */
 .hero {
   position: relative;
   padding: 84px 0 76px;
@@ -316,11 +316,11 @@ html.is-loading .marquee-track,
 }
 
 .marquee-track--left {
-  animation: marqueeLeft 54s linear infinite;
+  animation: marqueeLeft 68s linear infinite;
 }
 
 .marquee-track--right {
-  animation: marqueeRight 58s linear infinite;
+  animation: marqueeRight 74s linear infinite;
 }
 
 .hero-marquee-overlay {
@@ -328,7 +328,7 @@ html.is-loading .marquee-track,
   inset: 0;
   z-index: 1;
   background:
-    radial-gradient(ellipse at center, rgba(8, 8, 8, 0.7) 0%, rgba(8, 8, 8, 0.91) 76%, #080808 100%),
+    radial-gradient(ellipse at center, rgba(8, 8, 8, 0.68) 0%, rgba(8, 8, 8, 0.9) 76%, #080808 100%),
     linear-gradient(to bottom, #080808 0%, rgba(8, 8, 8, 0.18) 18%, rgba(8, 8, 8, 0.18) 82%, #080808 100%);
 }
 
@@ -344,18 +344,18 @@ html.is-loading .marquee-track,
   display: inline-block;
   font-family: var(--font-display);
   font-stretch: condensed;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 500;
   color: #b8b8b8;
   margin-bottom: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 .hero h1 {
   font-family: var(--font-display);
   font-stretch: condensed;
-  font-size: clamp(2.45rem, 5.8vw, 4.3rem);
+  font-size: clamp(2.5rem, 6vw, 4.4rem);
   font-weight: 700;
   line-height: 1.03;
   letter-spacing: -0.01em;
@@ -370,7 +370,7 @@ html.is-loading .marquee-track,
   font-size: 1.05rem;
   line-height: 1.55;
   color: #c2c2c2;
-  max-width: 540px;
+  max-width: 560px;
   margin-bottom: 30px;
   text-shadow: 0 4px 18px rgba(0, 0, 0, 0.85);
 }
@@ -394,7 +394,7 @@ html.is-loading .marquee-track,
   font-family: var(--font-display);
   font-stretch: condensed;
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -447,21 +447,6 @@ html.is-loading .marquee-track,
   padding-left: 22px;
 }
 
-.directory-left {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-}
-
-.directory-num {
-  font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-}
-
 .directory-name {
   font-family: var(--font-display);
   font-stretch: condensed;
@@ -473,7 +458,7 @@ html.is-loading .marquee-track,
 
 .directory-desc {
   font-family: var(--font-body);
-  font-size: 0.96rem;
+  font-size: 0.98rem;
   color: var(--text-muted);
   transition: color 0.25s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -549,11 +534,10 @@ html.is-loading .marquee-track,
 .owner-badge {
   display: inline-block;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--accent-text);
   background: var(--accent);
   padding: 2px 8px;
@@ -563,7 +547,6 @@ html.is-loading .marquee-track,
 
 .owner-panel-title {
   font-family: var(--font-display);
-  font-stretch: condensed;
   font-size: 1.65rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -576,8 +559,7 @@ html.is-loading .marquee-track,
   padding: 6px 14px;
   border-radius: 6px;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -608,8 +590,11 @@ html.is-loading .marquee-track,
 }
 
 .owner-field > span {
-  font-size: 0.85rem;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .owner-field input,
@@ -622,7 +607,7 @@ html.is-loading .marquee-track,
   border-radius: 6px;
   padding: 10px 12px;
   font-family: var(--font-body);
-  font-size: 0.96rem;
+  font-size: 0.95rem;
   outline: none;
   transition: border-color 0.2s ease;
 }
@@ -648,10 +633,10 @@ html.is-loading .marquee-track,
   border-radius: 6px;
   padding: 0 14px;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
   cursor: pointer;
   white-space: nowrap;
   transition: border-color 0.2s ease;
@@ -669,7 +654,7 @@ html.is-loading .marquee-track,
 }
 
 .owner-hint {
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   color: var(--text-muted);
 }
 
@@ -684,10 +669,10 @@ html.is-loading .marquee-track,
   padding: 4px 10px;
   border-radius: 6px;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -714,7 +699,7 @@ html.is-loading .marquee-track,
   border-radius: 6px;
   font-family: var(--font-display);
   font-stretch: condensed;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -782,21 +767,20 @@ html.is-loading .marquee-track,
   transform: scale(1.03);
 }
 
-/* Плашка «Серия • 13 листов» на обложке серии */
+/* Плашка для поста-серии */
 .series-badge {
   position: absolute;
   top: 12px;
-  right: 12px;
-  z-index: 3;
+  left: 12px;
+  z-index: 2;
   background: rgba(8, 8, 8, 0.86);
-  backdrop-filter: blur(8px);
   color: var(--text-main);
   border: 1px solid rgba(255, 255, 255, 0.22);
-  padding: 5px 10px;
+  backdrop-filter: blur(6px);
+  padding: 4px 10px;
   border-radius: 6px;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -812,8 +796,8 @@ html.is-loading .marquee-track,
   padding: 5px 10px;
   border-radius: 6px;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
   letter-spacing: 0.04em;
   opacity: 0;
   transform: translateY(4px);
@@ -831,18 +815,17 @@ html.is-loading .marquee-track,
 
 .project-meta {
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   margin-bottom: 6px;
 }
 
 .project-info h3 {
   font-family: var(--font-display);
   font-stretch: condensed;
-  font-size: 1.48rem;
+  font-size: 1.5rem;
   font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 8px;
@@ -850,8 +833,8 @@ html.is-loading .marquee-track,
 
 .project-info p {
   font-family: var(--font-body);
-  font-size: 0.94rem;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  line-height: 1.55;
   color: var(--text-muted);
 }
 
@@ -864,7 +847,6 @@ html.is-loading .marquee-track,
   border-radius: 10px;
   color: var(--text-muted);
   font-family: var(--font-display);
-  font-stretch: condensed;
   font-size: 1.25rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -886,8 +868,7 @@ html.is-loading .marquee-track,
   padding: 10px 18px;
   border-radius: 999px;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 1rem;
+  font-size: 1.02rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -918,7 +899,7 @@ html.is-loading .marquee-track,
   border-color: var(--accent);
 }
 
-/* Полноразмерный просмотр работы и серии (Lightbox) */
+/* Полноразмерный просмотр работы и увеличение в полный рост (Lightbox) */
 .lightbox {
   position: fixed;
   inset: 0;
@@ -947,7 +928,7 @@ html.is-loading .marquee-track,
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   opacity: 0;
   transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -1000,7 +981,7 @@ html.is-loading .marquee-track,
 
 .lightbox-media img {
   max-width: 90vw;
-  max-height: 68vh;
+  max-height: 73vh;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -1017,7 +998,7 @@ html.is-loading .marquee-track,
 
 .lightbox-placeholder {
   aspect-ratio: 4 / 5;
-  height: min(68vh, 640px);
+  height: min(70vh, 660px);
   max-width: 86vw;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -1031,57 +1012,6 @@ html.is-loading .marquee-track,
   text-transform: uppercase;
 }
 
-/* Переключатель листов внутри серии */
-.lightbox-series-bar {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--surface);
-  border: 1px solid #343434;
-  padding: 5px 10px;
-  border-radius: 999px;
-  z-index: 1005;
-}
-
-.lightbox-series-bar[hidden],
-.lightbox.is-zoomed .lightbox-series-bar {
-  display: none !important;
-}
-
-.series-step-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-main);
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-.series-step-btn:hover {
-  background: var(--accent);
-  color: var(--accent-text);
-  border-color: var(--accent);
-}
-
-.series-label {
-  font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.96rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-main);
-  padding: 0 4px;
-}
-
 .lightbox-caption {
   text-align: center;
   max-width: 620px;
@@ -1089,9 +1019,10 @@ html.is-loading .marquee-track,
 
 .lightbox-zoom-tip {
   display: inline-block;
-  font-size: 0.8rem;
-  color: #a3a3a3;
-  margin-bottom: 4px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: #b5b5b5;
+  margin-bottom: 6px;
 }
 
 .lightbox.is-zoomed .lightbox-caption {
@@ -1124,18 +1055,16 @@ html.is-loading .marquee-track,
 .lightbox-meta {
   display: block;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 2px;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
 }
 
 .lightbox-title {
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 1.48rem;
+  font-size: 1.55rem;
   font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 4px;
@@ -1143,7 +1072,7 @@ html.is-loading .marquee-track,
 
 .lightbox-desc {
   font-family: var(--font-body);
-  font-size: 0.94rem;
+  font-size: 0.95rem;
   line-height: 1.5;
   color: var(--text-muted);
 }
@@ -1160,8 +1089,7 @@ html.is-loading .marquee-track,
   padding: 8px 16px;
   border-radius: 6px;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 1rem;
+  font-size: 1.02rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1180,8 +1108,7 @@ html.is-loading .marquee-track,
   padding: 8px 16px;
   border-radius: 6px;
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 1rem;
+  font-size: 1.02rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1232,21 +1159,33 @@ html.is-loading .marquee-track,
   right: 20px;
 }
 
-/* Обо мне (about.html) — чистая читаемая колонка без списка навыков */
-.about-story {
-  max-width: 680px;
+/* Обо мне (about.html) — чистая колонка с читаемой наборкой */
+.about-single {
+  max-width: 700px;
 }
 
-.about-story p {
+.about-text p {
   font-family: var(--font-body);
-  font-size: 1.12rem;
+  font-size: 1.1rem;
   line-height: 1.65;
-  color: #cfcfcf;
+  color: #cccccc;
   margin-bottom: 22px;
 }
 
-.about-story p:last-child {
-  margin-bottom: 0;
+.about-text strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.inline-link {
+  color: var(--text-main);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: opacity 0.2s ease;
+}
+
+.inline-link:hover {
+  opacity: 0.72;
 }
 
 /* Контакты (contact.html) */
@@ -1254,9 +1193,9 @@ html.is-loading .marquee-track,
   font-family: var(--font-body);
   font-size: 1.08rem;
   line-height: 1.6;
-  color: #c2c2c2;
+  color: var(--text-muted);
   max-width: 560px;
-  margin-bottom: 34px;
+  margin-bottom: 36px;
 }
 
 /* Подвал */
@@ -1265,8 +1204,7 @@ footer {
   border-top: 1px solid var(--border);
   color: var(--text-muted);
   font-family: var(--font-display);
-  font-stretch: condensed;
-  font-size: 0.96rem;
+  font-size: 0.98rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -1350,7 +1288,7 @@ footer {
   font-variant-numeric: tabular-nums;
 }
 
-/* Адаптив для планшетов и смартфонов */
+/* Полная адаптация под планшеты и смартфоны */
 @media (max-width: 768px) {
   .container {
     padding: 0 16px;
@@ -1373,7 +1311,7 @@ footer {
   }
 
   .nav-links a {
-    font-size: 0.98rem;
+    font-size: 1rem;
   }
 
   .hero {
@@ -1381,12 +1319,12 @@ footer {
   }
 
   .hero-tag {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     margin-bottom: 10px;
   }
 
   .hero h1 {
-    font-size: clamp(2rem, 8.2vw, 2.75rem);
+    font-size: clamp(2.1rem, 8.4vw, 2.8rem);
     margin-bottom: 14px;
   }
 
@@ -1402,16 +1340,16 @@ footer {
 
   .hero-actions .btn {
     padding: 11px 22px;
-    font-size: 0.96rem;
+    font-size: 0.98rem;
   }
 
   .marquee-row {
-    opacity: 0.46;
+    opacity: 0.48;
   }
 
   .hero-marquee-overlay {
     background:
-      radial-gradient(ellipse at center, rgba(8, 8, 8, 0.58) 0%, rgba(8, 8, 8, 0.87) 78%, #080808 100%),
+      radial-gradient(ellipse at center, rgba(8, 8, 8, 0.56) 0%, rgba(8, 8, 8, 0.86) 78%, #080808 100%),
       linear-gradient(to bottom, #080808 0%, rgba(8, 8, 8, 0.14) 18%, rgba(8, 8, 8, 0.14) 82%, #080808 100%);
   }
 
@@ -1427,7 +1365,7 @@ footer {
   .directory-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
+    gap: 4px;
     padding: 18px 8px;
   }
 
@@ -1458,7 +1396,7 @@ footer {
 
   .filter-btn {
     padding: 7px 14px;
-    font-size: 0.95rem;
+    font-size: 0.98rem;
   }
 
   .projects-grid {
@@ -1475,17 +1413,13 @@ footer {
   }
 
   .project-info p {
-    font-size: 0.92rem;
+    font-size: 0.93rem;
   }
 
-  .about-story p {
-    font-size: 1.02rem;
-    margin-bottom: 18px;
-  }
-
+  .about-text p,
   .contact-lead {
-    font-size: 0.98rem;
-    margin-bottom: 24px;
+    font-size: 1rem;
+    margin-bottom: 20px;
   }
 
   .scroll-top-btn {
@@ -1504,7 +1438,7 @@ footer {
     left: 12px;
     max-width: calc(100vw - 116px);
     padding: 6px 10px;
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1514,13 +1448,13 @@ footer {
     top: max(12px, env(safe-area-inset-top));
     right: 12px;
     padding: 6px 10px;
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     white-space: nowrap;
   }
 
   .lightbox-media img {
     max-width: 92vw;
-    max-height: 58vh;
+    max-height: 62vh;
   }
 
   .lightbox.is-zoomed .lightbox-media img {
@@ -1533,11 +1467,11 @@ footer {
   }
 
   .lightbox-zoom-tip {
-    font-size: 0.76rem;
+    font-size: 0.78rem;
   }
 
   .lightbox-title {
-    font-size: 1.3rem;
+    font-size: 1.32rem;
   }
 
   .lightbox-desc {
@@ -1590,6 +1524,6 @@ footer {
 
   .hero-actions .btn {
     padding: 10px 18px;
-    font-size: 0.92rem;
+    font-size: 0.94rem;
   }
 }
