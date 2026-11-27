@@ -1148,7 +1148,8 @@ html.is-loading .marquee-track,
   object-fit: contain;
   border-radius: 6px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75);
-  pointer-events: none;
+  pointer-events: auto;
+  -webkit-user-drag: none;
 }
 
 .lightbox.is-zoomed .lightbox-media img {
