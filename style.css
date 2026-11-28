@@ -813,23 +813,42 @@ html.is-loading .marquee-track,
   color: var(--text-muted);
 }
 
-.owner-card-remove {
+/* Панель управления карточкой в режиме владельца (сортировка и удаление) */
+.owner-card-controls {
   position: absolute;
   top: 10px;
   left: 10px;
-  z-index: 4;
-  background: rgba(8, 8, 8, 0.88);
-  color: #ff6b6b;
-  border: 1px solid #ff6b6b;
-  padding: 4px 10px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.owner-card-move,
+.owner-card-remove {
+  background: rgba(8, 8, 8, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: var(--text-main);
+  padding: 4px 9px;
   border-radius: 6px;
   font-family: var(--font-display);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.owner-card-move:hover {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+.owner-card-remove {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
 }
 
 .owner-card-remove:hover {
@@ -875,12 +894,15 @@ html.is-loading .marquee-track,
 
 /* Сетка проектов (works.html) */
 .projects-grid {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 28px;
 }
 
 .project-card {
+  position: relative;
+  min-width: 0;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -922,8 +944,13 @@ html.is-loading .marquee-track,
   transform: scale(1.03);
 }
 
-/* Плашка для поста-серии */
+/* Плашка «Серия» — строго внутри .project-preview */
 .series-badge {
+  display: none;
+}
+
+.project-preview .series-badge {
+  display: inline-block;
   position: absolute;
   top: 12px;
   left: 12px;
@@ -941,7 +968,7 @@ html.is-loading .marquee-track,
   letter-spacing: 0.04em;
 }
 
-.project-card[data-custom-id] .owner-card-remove ~ .series-badge {
+body.is-owner-active .project-preview .series-badge {
   left: auto;
   right: 12px;
 }
@@ -961,12 +988,19 @@ html.is-loading .marquee-track,
   letter-spacing: 0.04em;
   opacity: 0;
   transform: translateY(4px);
+  pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .project-card:hover .preview-zoom-hint {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (hover: none) {
+  .preview-zoom-hint {
+    display: none !important;
+  }
 }
 
 .project-info {
@@ -1694,6 +1728,10 @@ footer {
   .projects-grid {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+
+  .preview-zoom-hint {
+    display: none !important;
   }
 
   .project-info {
