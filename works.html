@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ru" class=""><head>
+<html lang="ru">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -15,15 +16,15 @@
   <link rel="icon" type="image/png" sizes="192x192" href="Логотипы/android-chrome-192x192.png?v=4">
   <link rel="icon" type="image/png" sizes="512x512" href="Логотипы/android-chrome-512x512.png?v=4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=Sofia+Sans+Condensed:wght@500;600;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=7">
-  <script src="script.js?v=7"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Sofia+Sans+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=8">
+  <script src="script.js?v=8"></script>
 </head>
 <body>
 
   <div class="preloader" id="preloader" aria-hidden="true">
-    <div class="preloader-fill" id="preloader-fill" style="transform: scaleX(0);"></div>
+    <div class="preloader-fill" id="preloader-fill"></div>
     <div class="preloader-content">
       <img src="Логотипы/Лого 2.png" alt="Логотип кункови.ру" class="preloader-logo">
       <span class="preloader-percent" id="preloader-percent">0%</span>
@@ -55,11 +56,11 @@
 
     <section class="page-body reveal" style="--delay: 0.15s;">
       <!-- Скрытая панель владельца -->
-      <div class="owner-panel" id="owner-panel" hidden="">
+      <div class="owner-panel" id="owner-panel" hidden>
         <div class="owner-panel-head">
           <div>
             <span class="owner-badge">Режим владельца</span>
-            <h2 class="owner-panel-title" id="owner-panel-title">Добавить серию работ</h2>
+            <h2 class="owner-panel-title" id="owner-panel-title">Добавить новую работу</h2>
           </div>
           <button class="owner-exit-btn" id="owner-exit-btn" type="button">Выйти из режима ✕</button>
         </div>
@@ -74,10 +75,10 @@
           <div class="owner-form-grid">
             <label class="owner-field">
               <span>Год</span>
-              <select id="owner-year" required="">
+              <select id="owner-year" required>
                 <option value="2028">2028</option>
                 <option value="2027">2027</option>
-                <option value="2026" selected="">2026</option>
+                <option value="2026" selected>2026</option>
                 <option value="2025">2025</option>
                 <option value="2024">2024</option>
               </select>
@@ -85,35 +86,35 @@
 
             <label class="owner-field">
               <span>Категория / тип</span>
-              <input type="text" id="owner-category" value="Плакат" placeholder="Например: Плакат или Айдентика" required="">
+              <input type="text" id="owner-category" value="Плакат" placeholder="Например: Плакат или Айдентика" required>
             </label>
 
             <label class="owner-field">
-              <span id="owner-title-label">Название серии</span>
-              <input type="text" id="owner-title" placeholder="Например: Серия «Метро»" required="">
+              <span id="owner-title-label">Название работы</span>
+              <input type="text" id="owner-title" placeholder="Например: Новый плакат" required>
             </label>
 
             <!-- Поле файла для одиночной работы -->
             <label class="owner-field" id="owner-single-file-field">
               <span>Файл в папке Работы/<span id="owner-folder-year">2026</span>/</span>
               <div class="owner-file-row">
-                <input type="text" id="owner-filename" placeholder="Имя файла.webp">
+                <input type="text" id="owner-filename" placeholder="Имя файла.webp" required>
                 <label class="owner-file-pick">
                   Выбрать
-                  <input type="file" id="owner-file-input" accept="image/*" hidden="">
+                  <input type="file" id="owner-file-input" accept="image/*" hidden>
                 </label>
               </div>
             </label>
           </div>
 
           <!-- Блок выбора и настройки листов для серии работ -->
-          <div class="owner-series-box" id="owner-series-box" hidden="">
+          <div class="owner-series-box" id="owner-series-box" hidden>
             <div class="owner-series-toolbar">
               <span class="owner-series-caption">Листы серии в папке <strong>Работы/<span id="owner-series-folder-year">2026</span>/</strong> (первый лист станет обложкой):</span>
               <div class="owner-series-btns">
                 <label class="owner-file-pick">
                   Выбрать файлы серии
-                  <input type="file" id="owner-series-files-input" accept="image/*" multiple="" hidden="">
+                  <input type="file" id="owner-series-files-input" accept="image/*" multiple hidden>
                 </label>
                 <button class="owner-file-pick" id="owner-series-add-row" type="button">+ Добавить лист</button>
               </div>
@@ -123,17 +124,17 @@
           </div>
 
           <label class="owner-field">
-            <span id="owner-desc-label">Описание серии</span>
-            <textarea id="owner-desc" rows="2" placeholder="Краткое описание идеи, типографики и графики..." required=""></textarea>
+            <span id="owner-desc-label">Описание работы</span>
+            <textarea id="owner-desc" rows="2" placeholder="Краткое описание идеи, типографики и графики..." required></textarea>
           </label>
 
           <div class="owner-actions">
-            <button class="btn" id="owner-submit-btn" type="submit">Добавить серию</button>
+            <button class="btn" id="owner-submit-btn" type="submit">Добавить работу</button>
             <button class="btn btn--outline" id="owner-download-html" type="button">Скачать обновлённый works.html</button>
             <button class="btn btn--outline" id="owner-copy-full-html" type="button">Скопировать весь works.html</button>
             <button class="btn btn--outline" id="owner-copy-code" type="button">Скопировать код карточки</button>
           </div>
-          <p class="owner-hint" id="owner-status">Серия <strong>«Мерч команды СПбКТ на Кубок Ректора 2026»</strong> (2 листа) добавлена! Чтобы она появилась на телефонах, нажмите <strong>«Скачать обновлённый works.html»</strong> (или «Скопировать весь works.html») и обновите файл на GitHub.</p>
+          <p class="owner-hint" id="owner-status">Картинки в формате <strong>.webp</strong> должны быть загружены в папку <strong>Работы/<span id="owner-hint-year">2026</span>/</strong> на GitHub. Новые работы автоматически встают в начало своего года, а порядок карточек можно менять стрелками <strong>← / →</strong> прямо на превью.</p>
         </form>
       </div>
 
@@ -147,10 +148,11 @@
         <button class="filter-btn" type="button" data-filter="2028">2028</button>
       </div>
 
-      <div class="projects-grid" id="projects-grid"><article class="project-card" data-year="2025" data-series="Работы/2025/МЕРЧ КУРАТОРОВ КТ25 (СПИНА ИСХОДНАЯ).webp::Лист 1|Работы/2025/МЕРЧ КУРАТОРОВ КТ25 (СПИНА ИНВЕРСИВНАЯ).webp::Лист 2" tabindex="0" role="button" aria-label="Открыть серию работ Мерч кураторов СПбКТ 2025 (2 листа)">
+      <div class="projects-grid" id="projects-grid">
+
+        <!-- 2026 -->
+        <article class="project-card" data-year="2026" data-series="Работы/2026/МЕРЧ КОМАНДЫ ССКТ НА КР26 (ЛИЦО).webp::Лист 1|Работы/2026/МЕРЧ КОМАНДЫ ССКТ НА КР26 (СПИНА).webp::Лист 2" tabindex="0" role="button" aria-label="Открыть серию работ Мерч команды СПбКТ на Кубок Ректора 2026 (2 листа)">
           <div class="project-preview">
-            
-             <!-- 2026 -->
             <span class="series-badge">Серия</span>
             <img src="Работы/2026/МЕРЧ КОМАНДЫ ССКТ НА КР26 (ЛИЦО).webp" alt="Мерч команды СПбКТ на Кубок Ректора 2026" loading="lazy" decoding="async">
             <span class="preview-zoom-hint">Листать серию ↗</span>
@@ -160,9 +162,10 @@
             <h3>Мерч команды СПбКТ на Кубок Ректора 2026</h3>
             <p>Дизайн футболки с минималистичным принтом на груди и графическим принтом на спину. Футболки печатались для всех участников команды Кубка Ректора 2026 в СПбГУТ.</p>
           </div>
-        </article><article class="project-card" data-year="2026" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+        </article>
+
+        <article class="project-card" data-year="2026" data-series="Работы/2026/МЕРЧ КУРАТОРАМ КТ26 (ЛИЦО).webp::Лист 1|Работы/2026/МЕРЧ КУРАТОРАМ КТ26 (СПИНА).webp::Лист 2" tabindex="0" role="button" aria-label="Открыть серию работ Мерч кураторов СПбКТ 2026 (2 листа)">
           <div class="project-preview">
-            
             <span class="series-badge">Серия</span>
             <img src="Работы/2026/МЕРЧ КУРАТОРАМ КТ26 (ЛИЦО).webp" alt="Мерч кураторов СПбКТ 2026" loading="lazy" decoding="async">
             <span class="preview-zoom-hint">Листать серию ↗</span>
@@ -172,9 +175,10 @@
             <h3>Мерч кураторов СПбКТ 2026</h3>
             <p>Дизайн футболки с минималистичным принтом на груди и графическим принтом на спине</p>
           </div>
-        </article><article class="project-card" data-year="2026" data-series="Работы/2026/МЕРЧ КОМАНДЫ ССКТ НА КР26 (ЛИЦО).webp::Лист 1|Работы/2026/МЕРЧ КОМАНДЫ ССКТ НА КР26 (СПИНА).webp::Лист 2" tabindex="0" role="button" aria-label="Открыть серию работ Мерч команды СПбКТ на Кубок Ректора 2026 (2 листа)">
+        </article>
+
+        <article class="project-card" data-year="2026" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
           <div class="project-preview">
-            
             <img src="Работы/2026/ССКТ. ПЛАКАТ НА 4 МАЯ.webp" alt="ПЛАКАТ К 9 МАЯ" loading="lazy" decoding="async">
             <span class="preview-zoom-hint">Во весь экран ↗</span>
           </div>
@@ -184,7 +188,7 @@
             <p>Плакат, который меня попросил сделать Студенческий Совет СПбКТ к 9 мая для выставки постеров среди всех факультетов СПбГУТ.</p>
           </div>
         </article>
-        
+
         <article class="project-card" data-year="2026" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
           <div class="project-preview">
             <img src="Работы/2026/Пустое Множество.webp" alt="Плакат Пустое Множество — Алексей Румянцев" loading="lazy" decoding="async">
@@ -222,7 +226,9 @@
         </article>
 
         <!-- 2025 -->
-        <span class="series-badge">Серия</span>
+        <article class="project-card" data-year="2025" data-series="Работы/2025/МЕРЧ КУРАТОРОВ КТ25 (СПИНА ИСХОДНАЯ).webp::Лист 1|Работы/2025/МЕРЧ КУРАТОРОВ КТ25 (СПИНА ИНВЕРСИВНАЯ).webp::Лист 2" tabindex="0" role="button" aria-label="Открыть серию работ Мерч кураторов СПбКТ 2025 (2 листа)">
+          <div class="project-preview">
+            <span class="series-badge">Серия</span>
             <img src="Работы/2025/МЕРЧ КУРАТОРОВ КТ25 (СПИНА ИСХОДНАЯ).webp" alt="Мерч кураторов СПбКТ 2025" loading="lazy" decoding="async">
             <span class="preview-zoom-hint">Листать серию ↗</span>
           </div>
@@ -231,9 +237,8 @@
             <h3>Мерч кураторов СПбКТ 2025</h3>
             <p>Дизайн футболки с принтом на спину. Для печати было создано 2 версии: исходная и инверсивная.</p>
           </div>
-        </article><article class="project-card" data-year="2026" data-series="Работы/2026/МЕРЧ КУРАТОРАМ КТ26 (ЛИЦО).webp::Лист 1|Работы/2026/МЕРЧ КУРАТОРАМ КТ26 (СПИНА).webp::Лист 2" tabindex="0" role="button" aria-label="Открыть серию работ Мерч кураторов СПбКТ 2026 (2 листа)">
-          <div class="project-preview">
-        
+        </article>
+
         <article class="project-card" data-year="2025" data-series="Работы/2025/КГ 0. Обложка.webp::Обложка (0/12)|Работы/2025/КГ 1. Крыса.webp::Крыса (1/12)|Работы/2025/КГ 2. Бык.webp::Бык (2/12)|Работы/2025/КГ 3. Тигр.webp::Тигр (3/12)|Работы/2025/КГ 4. Кролик.webp::Кролик (4/12)|Работы/2025/КГ 5. Дракон.webp::Дракон (5/12)|Работы/2025/КГ 6. Змея.webp::Змея (6/12)|Работы/2025/КГ 7. Лошадь.webp::Лошадь (7/12)|Работы/2025/КГ 8. Коза.webp::Коза (8/12)|Работы/2025/КГ 9. Обезьяна.webp::Обезьяна (9/12)|Работы/2025/КГ 10. Петух.webp::Петух (10/12)|Работы/2025/КГ 11. Собака.webp::Собака (11/12)|Работы/2025/КГ 12. Свинья.webp::Свинья (12/12)" tabindex="0" role="button" aria-label="Открыть серию плакатов Китайский гороскоп (13 листов)">
           <div class="project-preview">
             <span class="series-badge">Серия</span>
@@ -353,7 +358,7 @@
       </div>
 
       <!-- Сообщение для года, в котором пока нет работ -->
-      <div class="projects-empty" id="projects-empty" hidden="">
+      <div class="projects-empty" id="projects-empty" hidden>
         Работы за <span id="projects-empty-year"></span> год скоро появятся.
       </div>
     </section>
@@ -375,17 +380,17 @@
       </div>
 
       <!-- Переключатель листов внутри серии (появляется только у постов-серий) -->
-      <div class="lightbox-series-bar" id="lightbox-series-bar" hidden="">
+      <div class="lightbox-series-bar" id="lightbox-series-bar" hidden>
         <button class="series-step-btn" id="series-prev-btn" type="button" aria-label="Предыдущий лист серии">‹</button>
-        <span class="series-label" id="series-label">Лист 2 / 2</span>
+        <span class="series-label" id="series-label">Лист 1 / 13</span>
         <button class="series-step-btn" id="series-next-btn" type="button" aria-label="Следующий лист серии">›</button>
       </div>
 
       <div class="lightbox-caption">
-        <span class="lightbox-zoom-tip" id="lightbox-zoom-tip">Листайте серию стрелками или свайпом • Нажми дважды, чтобы увеличить</span>
-        <span class="lightbox-meta" id="lightbox-meta">Серия работ • 2026</span>
-        <h3 class="lightbox-title" id="lightbox-title">Лист 2</h3>
-        <p class="lightbox-desc" id="lightbox-desc">Дизайн футболки с минималистичным принтом на груди и графическим принтом на спине</p>
+        <span class="lightbox-zoom-tip" id="lightbox-zoom-tip">Нажми дважды, чтобы увеличить работу</span>
+        <span class="lightbox-meta" id="lightbox-meta"></span>
+        <h3 class="lightbox-title" id="lightbox-title"></h3>
+        <p class="lightbox-desc" id="lightbox-desc"></p>
       </div>
     </div>
   </div>
@@ -397,7 +402,5 @@
     </div>
   </footer>
 
-
-
-
-</body></html>
+</body>
+</html>
