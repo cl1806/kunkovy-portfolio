@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="theme-color" content="#080808">
   <title>кункови.ру</title>
   <link rel="icon" href="favicon.ico?v=4" sizes="any">
@@ -15,8 +18,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Sofia+Sans+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
+  <link rel="stylesheet" href="style.css?v=7">
+  <script src="script.js?v=7"></script>
 </head>
 <body>
 
@@ -30,7 +33,7 @@
 
   <header class="site-header" id="site-header">
     <div class="container header-centered-inner">
-      <a href="./" class="logo" id="logo-link" aria-label="Обновить страницу">
+      <a href="./" class="logo" id="logo-link" aria-label="На главную">
         <img src="Логотипы/Лого.png" alt="кункови.ру">
       </a>
 
@@ -46,41 +49,40 @@
   </header>
 
   <main class="page-content">
-    <!-- Главный баннер -->
+    <!-- Главный баннер с быстрой фоновой прокруткой работ в WebP -->
     <section class="hero hero--marquee reveal" id="hero-section" style="--delay: 0.05s;">
       <div class="hero-marquee" id="hero-marquee" aria-hidden="true">
-        <!-- Полоса 1 -->
+        <!-- Полоса 1 (движение влево) -->
         <div class="marquee-row">
           <div class="marquee-track marquee-track--left" id="marquee-track-1">
-            <img src="Работы/2026/Пустое Множество.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2026/До бед.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2026/Моя мечта.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2025/КГ 0. Обложка.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2025/КГ 3. Тигр.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2025/Творческое безумие 8. Лекция 1.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2025/Творческое безумие 8. Лекция 3.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2025/Творческое безумие 8. Лекция 4.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2025/Творческое безумие 8. Лекция 5.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2025/Творческое безумие 8. Лекция 6.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Плакат Берсерк.webp" alt="" width="192" height="240" decoding="async">
+            <div class="marquee-tile" data-src="Работы/2026/Пустое Множество.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2026/До бед.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2026/Моя мечта.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2025/КГ 0. Обложка.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2025/Творческое безумие 8. Лекция 1.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2025/Творческое безумие 8. Лекция 3.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2025/Творческое безумие 8. Лекция 4.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2025/Творческое безумие 8. Лекция 5.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2025/Творческое безумие 8. Лекция 6.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Плакат Берсерк.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Мерч Студсовета СПбКТ 2024 (лицо).webp"></div>
           </div>
         </div>
 
-        <!-- Полоса 2 -->
+        <!-- Полоса 2 (движение вправо) -->
         <div class="marquee-row">
           <div class="marquee-track marquee-track--right" id="marquee-track-2">
-            <img src="Работы/2024/Мерч Студсовета СПбКТ 2024 (лицо).webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Мерч Студсовета СПбКТ 2024 (спина).webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Текстовое безумие 2024. 2 лекция.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Текстовое безумие 2024. Домашка 2.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Текстовое безумие 2024. Домашнее задание 1.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Текстовое безумие 2024. Технологический институт.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Текстовое безумие 2024. Шаверма.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Проспект Ветеранов.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Пушкинская.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/freedurov.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/Химера.webp" alt="" width="192" height="240" decoding="async">
-            <img src="Работы/2024/RHCP плакат.webp" alt="" width="192" height="240" decoding="async">
+            <div class="marquee-tile" data-src="Работы/2024/Мерч Студсовета СПбКТ 2024 (спина).webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Текстовое безумие 2024. 2 лекция.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Текстовое безумие 2024. Домашка 2.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Текстовое безумие 2024. Домашнее задание 1.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Текстовое безумие 2024. Технологический институт.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Текстовое безумие 2024. Шаверма.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Проспект Ветеранов.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Пушкинская.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/freedurov.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/Химера.webp"></div>
+            <div class="marquee-tile" data-src="Работы/2024/RHCP плакат.webp"></div>
           </div>
         </div>
 
@@ -88,9 +90,9 @@
       </div>
 
       <div class="container hero-content">
-        <span class="hero-tag">Олег Кунков • кункови</span>
-        <h1>Графический дизайнер. Делаю плакаты, обложки и типографику</h1>
-        <p>Работаю со шрифтом, печатной фактурой и контрастной графикой - от музыкальных постеров и мерча до визуального оформления проектов.</p>
+        <span class="hero-tag">Олег Кунков (кункови) • Санкт-Петербург</span>
+        <h1>Графический дизайнер. Делаю плакаты, айдентику и мерч</h1>
+        <p>Работаю с акцидентной типографикой, растром и печатной фактурой. Создаю визуал для музыкальных релизов, локальных брендов и культурных проектов</p>
         <div class="hero-actions">
           <a href="works.html" class="btn">Смотреть работы</a>
           <a href="contact.html" class="btn btn--outline">Связаться</a>
@@ -108,12 +110,12 @@
 
           <a href="about.html" class="directory-item">
             <span class="directory-name">Обо мне</span>
-            <span class="directory-desc">Кто я, как пришёл в дизайн и как строю работу над проектами →</span>
+            <span class="directory-desc">Кто я, как пришёл в графический дизайн и как работаю →</span>
           </a>
 
           <a href="contact.html" class="directory-item">
             <span class="directory-name">Контакты</span>
-            <span class="directory-desc">Telegram, Dprofile, другие ресурсы и почта для связи →</span>
+            <span class="directory-desc">Telegram, Dprofile и почта для обсуждения задач →</span>
           </a>
         </div>
       </section>
@@ -123,7 +125,7 @@
   <footer class="page-content">
     <div class="container footer-inner">
       <span>© 2026 кункови.ру</span>
-      <span>Олег Кунков</span>
+      <span>Олег Кунков • Графический дизайн</span>
     </div>
   </footer>
 
