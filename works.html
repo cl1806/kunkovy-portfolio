@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="theme-color" content="#080808">
   <title>кункови.ру</title>
   <link rel="icon" href="favicon.ico?v=4" sizes="any">
@@ -15,8 +18,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Sofia+Sans+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
+  <link rel="stylesheet" href="style.css?v=7">
+  <script src="script.js?v=7"></script>
 </head>
 <body>
 
@@ -128,9 +131,10 @@
           <div class="owner-actions">
             <button class="btn" id="owner-submit-btn" type="submit">Добавить работу</button>
             <button class="btn btn--outline" id="owner-download-html" type="button">Скачать обновлённый works.html</button>
+            <button class="btn btn--outline" id="owner-copy-full-html" type="button">Скопировать весь works.html</button>
             <button class="btn btn--outline" id="owner-copy-code" type="button">Скопировать код карточки</button>
           </div>
-          <p class="owner-hint" id="owner-status">Картинки должны лежать в папке <strong>Работы/<span id="owner-hint-year">2026</span>/</strong>. После добавления скачайте обновлённый <strong>works.html</strong> и замените им файл в папке сайта.</p>
+          <p class="owner-hint" id="owner-status">Картинки в формате <strong>.webp</strong> должны быть загружены в папку <strong>Работы/<span id="owner-hint-year">2026</span>/</strong> на GitHub. Чтобы новые работы появились на телефонах, после добавления обновите файл <strong>works.html</strong> в репозитории.</p>
         </form>
       </div>
 
@@ -147,18 +151,6 @@
       <div class="projects-grid" id="projects-grid">
 
         <!-- 2026 -->
-        <article class="project-card" data-year="2026" data-custom-id="1795742100808" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
-          <div class="project-preview">  
-            <img src="Работы/2026/ССКТ. ПЛАКАТ НА 4 МАЯ.jpg" alt="ПЛАКАТ К 9 МАЯ" loading="lazy" decoding="async">
-            <span class="preview-zoom-hint">Во весь экран ↗</span>
-          </div>
-          <div class="project-info">
-            <div class="project-meta">Плакат • 2026</div>
-            <h3>ПЛАКАТ К 9 МАЯ</h3>
-            <p>Плакат, который меня попросил сделать Студенческий Совет СПбКТ к 9 мая для выставки постеров среди всех факультетов СПбГУТ.</p>
-          </div>
-        </article>
-        
         <article class="project-card" data-year="2026" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
           <div class="project-preview">
             <img src="Работы/2026/Пустое Множество.webp" alt="Плакат Пустое Множество — Алексей Румянцев" loading="lazy" decoding="async">
