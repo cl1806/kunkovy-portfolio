@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
+<html lang="ru" class=""><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -16,15 +15,15 @@
   <link rel="icon" type="image/png" sizes="192x192" href="Логотипы/android-chrome-192x192.png?v=4">
   <link rel="icon" type="image/png" sizes="512x512" href="Логотипы/android-chrome-512x512.png?v=4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Sofia+Sans+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=Sofia+Sans+Condensed:wght@500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=7">
   <script src="script.js?v=7"></script>
 </head>
 <body>
 
   <div class="preloader" id="preloader" aria-hidden="true">
-    <div class="preloader-fill" id="preloader-fill"></div>
+    <div class="preloader-fill" id="preloader-fill" style="transform: scaleX(0);"></div>
     <div class="preloader-content">
       <img src="Логотипы/Лого 2.png" alt="Логотип кункови.ру" class="preloader-logo">
       <span class="preloader-percent" id="preloader-percent">0%</span>
@@ -56,7 +55,7 @@
 
     <section class="page-body reveal" style="--delay: 0.15s;">
       <!-- Скрытая панель владельца -->
-      <div class="owner-panel" id="owner-panel" hidden>
+      <div class="owner-panel" id="owner-panel" hidden="">
         <div class="owner-panel-head">
           <div>
             <span class="owner-badge">Режим владельца</span>
@@ -75,10 +74,10 @@
           <div class="owner-form-grid">
             <label class="owner-field">
               <span>Год</span>
-              <select id="owner-year" required>
+              <select id="owner-year" required="">
                 <option value="2028">2028</option>
                 <option value="2027">2027</option>
-                <option value="2026" selected>2026</option>
+                <option value="2026" selected="">2026</option>
                 <option value="2025">2025</option>
                 <option value="2024">2024</option>
               </select>
@@ -86,35 +85,35 @@
 
             <label class="owner-field">
               <span>Категория / тип</span>
-              <input type="text" id="owner-category" value="Плакат" placeholder="Например: Плакат или Айдентика" required>
+              <input type="text" id="owner-category" value="Плакат" placeholder="Например: Плакат или Айдентика" required="">
             </label>
 
             <label class="owner-field">
               <span id="owner-title-label">Название работы</span>
-              <input type="text" id="owner-title" placeholder="Например: Новый плакат" required>
+              <input type="text" id="owner-title" placeholder="Например: Новый плакат" required="">
             </label>
 
             <!-- Поле файла для одиночной работы -->
             <label class="owner-field" id="owner-single-file-field">
               <span>Файл в папке Работы/<span id="owner-folder-year">2026</span>/</span>
               <div class="owner-file-row">
-                <input type="text" id="owner-filename" placeholder="Имя файла.webp" required>
+                <input type="text" id="owner-filename" placeholder="Имя файла.webp" required="">
                 <label class="owner-file-pick">
                   Выбрать
-                  <input type="file" id="owner-file-input" accept="image/*" hidden>
+                  <input type="file" id="owner-file-input" accept="image/*" hidden="">
                 </label>
               </div>
             </label>
           </div>
 
           <!-- Блок выбора и настройки листов для серии работ -->
-          <div class="owner-series-box" id="owner-series-box" hidden>
+          <div class="owner-series-box" id="owner-series-box" hidden="">
             <div class="owner-series-toolbar">
               <span class="owner-series-caption">Листы серии в папке <strong>Работы/<span id="owner-series-folder-year">2026</span>/</strong> (первый лист станет обложкой):</span>
               <div class="owner-series-btns">
                 <label class="owner-file-pick">
                   Выбрать файлы серии
-                  <input type="file" id="owner-series-files-input" accept="image/*" multiple hidden>
+                  <input type="file" id="owner-series-files-input" accept="image/*" multiple="" hidden="">
                 </label>
                 <button class="owner-file-pick" id="owner-series-add-row" type="button">+ Добавить лист</button>
               </div>
@@ -125,7 +124,7 @@
 
           <label class="owner-field">
             <span id="owner-desc-label">Описание работы</span>
-            <textarea id="owner-desc" rows="2" placeholder="Краткое описание идеи, типографики и графики..." required></textarea>
+            <textarea id="owner-desc" rows="2" placeholder="Краткое описание идеи, типографики и графики..." required=""></textarea>
           </label>
 
           <div class="owner-actions">
@@ -134,7 +133,7 @@
             <button class="btn btn--outline" id="owner-copy-full-html" type="button">Скопировать весь works.html</button>
             <button class="btn btn--outline" id="owner-copy-code" type="button">Скопировать код карточки</button>
           </div>
-          <p class="owner-hint" id="owner-status">Картинки в формате <strong>.webp</strong> должны быть загружены в папку <strong>Работы/<span id="owner-hint-year">2026</span>/</strong> на GitHub. Чтобы новые работы появились на телефонах, после добавления обновите файл <strong>works.html</strong> в репозитории.</p>
+          <p class="owner-hint" id="owner-status">Весь код <strong>works.html</strong> скопирован! Откройте <strong>works.html</strong> на GitHub → нажмите карандаш (Edit) → <strong>Ctrl+A</strong> → <strong>Ctrl+V</strong> → <strong>Commit changes</strong>.</p>
         </form>
       </div>
 
@@ -148,7 +147,18 @@
         <button class="filter-btn" type="button" data-filter="2028">2028</button>
       </div>
 
-      <div class="projects-grid" id="projects-grid">
+      <div class="projects-grid" id="projects-grid"><article class="project-card" data-year="2026" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
+          <div class="project-preview">
+            
+            <img src="Работы/2026/ССКТ. ПЛАКАТ НА 4 МАЯ.webp" alt="ПЛАКАТ К 9 МАЯ" loading="lazy" decoding="async">
+            <span class="preview-zoom-hint">Во весь экран ↗</span>
+          </div>
+          <div class="project-info">
+            <div class="project-meta">Плакат • 2026</div>
+            <h3>ПЛАКАТ К 9 МАЯ</h3>
+            <p>Плакат, который меня попросил сделать Студенческий Совет СПбКТ к 9 мая для выставки постеров среди всех факультетов СПбГУТ.</p>
+          </div>
+        </article>
 
         <!-- 2026 -->
         <article class="project-card" data-year="2026" tabindex="0" role="button" aria-label="Открыть работу в полном размере">
@@ -307,7 +317,7 @@
       </div>
 
       <!-- Сообщение для года, в котором пока нет работ -->
-      <div class="projects-empty" id="projects-empty" hidden>
+      <div class="projects-empty" id="projects-empty" hidden="">
         Работы за <span id="projects-empty-year"></span> год скоро появятся.
       </div>
     </section>
@@ -329,7 +339,7 @@
       </div>
 
       <!-- Переключатель листов внутри серии (появляется только у постов-серий) -->
-      <div class="lightbox-series-bar" id="lightbox-series-bar" hidden>
+      <div class="lightbox-series-bar" id="lightbox-series-bar" hidden="">
         <button class="series-step-btn" id="series-prev-btn" type="button" aria-label="Предыдущий лист серии">‹</button>
         <span class="series-label" id="series-label">Лист 1 / 13</span>
         <button class="series-step-btn" id="series-next-btn" type="button" aria-label="Следующий лист серии">›</button>
@@ -337,9 +347,9 @@
 
       <div class="lightbox-caption">
         <span class="lightbox-zoom-tip" id="lightbox-zoom-tip">Нажми дважды, чтобы увеличить работу</span>
-        <span class="lightbox-meta" id="lightbox-meta"></span>
-        <h3 class="lightbox-title" id="lightbox-title"></h3>
-        <p class="lightbox-desc" id="lightbox-desc"></p>
+        <span class="lightbox-meta" id="lightbox-meta">Плакат • 2026</span>
+        <h3 class="lightbox-title" id="lightbox-title">ПЛАКАТ К 9 МАЯ</h3>
+        <p class="lightbox-desc" id="lightbox-desc">Плакат, который меня попросил сделать Студенческий Совет СПбКТ к 9 мая для выставки постеров среди всех факультетов СПбГУТ.</p>
       </div>
     </div>
   </div>
@@ -351,5 +361,6 @@
     </div>
   </footer>
 
-</body>
-</html>
+
+
+</body></html>
