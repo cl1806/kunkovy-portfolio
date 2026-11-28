@@ -348,7 +348,6 @@ function initApp() {
     }
   }
 
-  // Запускаем прелоадер и одновременно в фоне готовим миниатюры WebP для ленты
   initMarquee();
 
   if (root.classList.contains('is-loading')) {
@@ -752,7 +751,7 @@ function initApp() {
     projectsGrid.addEventListener(
       'touchend',
       (e) => {
-        if (e.target.closest('.owner-card-remove')) return;
+        if (e.target.closest('.owner-card-controls')) return;
         const card = e.target.closest('.project-card');
         if (!card || e.changedTouches.length !== 1) return;
 
@@ -775,13 +774,13 @@ function initApp() {
     );
 
     projectsGrid.addEventListener('click', (e) => {
-      if (e.target.closest('.owner-card-remove')) return;
+      if (e.target.closest('.owner-card-controls')) return;
       const card = e.target.closest('.project-card');
       if (card) openLightbox(card, false);
     });
 
     projectsGrid.addEventListener('dblclick', (e) => {
-      if (e.target.closest('.owner-card-remove')) return;
+      if (e.target.closest('.owner-card-controls')) return;
       const card = e.target.closest('.project-card');
       if (card) {
         e.preventDefault();
@@ -1014,7 +1013,7 @@ function initApp() {
     });
   }
 
-  // 6. Скрытый режим владельца (одиночные работы и серии работ + синхронизация с мобильными)
+  // 6. Скрытый режим владельца (авто-вставка по годам + сортировка и удаление карточек без правки кода)
   const ownerPanel = document.getElementById('owner-panel');
   const ownerPanelTitle = document.getElementById('owner-panel-title');
   const ownerForm = document.getElementById('owner-form');
@@ -1044,7 +1043,7 @@ function initApp() {
   const footerCopy = document.getElementById('footer-copy');
   const STORAGE_KEY_ADMIN = 'kunkovy_owner_mode';
   const STORAGE_KEY_WORKS = 'kunkovy_custom_works';
-  let ownerPublishMode = 'single'; // 'single' | 'series'
+  let ownerPublishMode = 'single';
   let lastGeneratedCardHTML = '';
   let ownerHideTimer = null;
 
@@ -1104,13 +1103,55 @@ function initApp() {
       .replace(/"/g, '&quot;');
   }
 
-  function buildCardMarkup(item, isOwnerVisible) {
+  function insertCardByYear(cardEl) {
+    if (!projectsGrid || !cardEl) return;
+    const targetYear = parseInt(getCardYear(cardEl), 10) || 0;
+    const existingCards = getAllCards().filter((c) => c !== cardEl);
+
+    // Ищем первую карточку с таким же или более ранним годом и вставляем перед ней
+    const anchor = existingCards.find((c) => {
+      const y = parseInt(getCardYear(c), 10) || 0;
+      return targetYear > 0 && y > 0 && y <= targetYear;
+    });
+
+    if (anchor) {
+      projectsGrid.insertBefore(cardEl, anchor);
+    } else {
+      projectsGrid.appendChild(cardEl);
+    }
+  }
+
+  function syncOwnerCardControls(isOwnerVisible) {
+    if (!projectsGrid) return;
+    document.body.classList.toggle('is-owner-active', Boolean(isOwnerVisible));
+
+    getAllCards().forEach((card) => {
+      const preview = card.querySelector('.project-preview');
+      if (!preview) return;
+
+      const existing = preview.querySelector('.owner-card-controls');
+      if (!isOwnerVisible) {
+        if (existing) existing.remove();
+        return;
+      }
+
+      if (!existing) {
+        const controls = document.createElement('div');
+        controls.className = 'owner-card-controls';
+        controls.innerHTML = `
+          <button class="owner-card-move" type="button" data-card-act="prev" title="Сдвинуть левее / выше">←</button>
+          <button class="owner-card-move" type="button" data-card-act="next" title="Сдвинуть правее / ниже">→</button>
+          <button class="owner-card-remove" type="button" data-card-act="remove" title="Удалить карточку">Удалить ✕</button>
+        `;
+        preview.prepend(controls);
+      }
+    });
+  }
+
+  function buildCardMarkup(item) {
     const safeCategory = escapeHTML(item.category);
     const safeDesc = escapeHTML(item.desc);
     const safeYear = escapeHTML(item.year);
-    const removeBtnHTML = isOwnerVisible && item.id
-      ? `<button class="owner-card-remove" type="button" data-remove-id="${item.id}">Удалить ✕</button>`
-      : '';
 
     if (Array.isArray(item.series) && item.series.length > 0) {
       const sheetsText = formatSheetsCount(item.series.length);
@@ -1127,7 +1168,6 @@ function initApp() {
 
       return `<article class="project-card" data-year="${safeYear}" data-series="${escapeHTML(seriesAttrValue)}" ${item.id ? `data-custom-id="${item.id}"` : ''} tabindex="0" role="button" aria-label="Открыть серию работ ${safeTitle} (${sheetsText})">
           <div class="project-preview">
-            ${removeBtnHTML}
             <span class="series-badge">Серия</span>
             <img src="${coverSrc}" alt="${safeTitle}" loading="lazy" decoding="async">
             <span class="preview-zoom-hint">Листать серию ↗</span>
@@ -1145,7 +1185,6 @@ function initApp() {
 
     return `<article class="project-card" data-year="${safeYear}" ${item.id ? `data-custom-id="${item.id}"` : ''} tabindex="0" role="button" aria-label="Открыть работу в полном размере">
           <div class="project-preview">
-            ${removeBtnHTML}
             <img src="${imgSrc}" alt="${safeTitle}" loading="lazy" decoding="async">
             <span class="preview-zoom-hint">Во весь экран ↗</span>
           </div>
@@ -1161,7 +1200,6 @@ function initApp() {
     if (!projectsGrid) return;
     projectsGrid.querySelectorAll('[data-custom-id]').forEach((el) => el.remove());
 
-    // Собираем пути работ, которые уже сохранены в самом файле works.html, чтобы не было дублей на ПК
     const existingStaticSrcs = new Set();
     projectsGrid.querySelectorAll('.project-card').forEach((card) => {
       const img = card.querySelector('.project-preview img');
@@ -1189,14 +1227,16 @@ function initApp() {
       saveCustomWorks(unpublishedDrafts);
     }
 
-    [...unpublishedDrafts].reverse().forEach((item) => {
+    unpublishedDrafts.forEach((item) => {
       const temp = document.createElement('div');
-      temp.innerHTML = buildCardMarkup(item, isOwnerVisible);
+      temp.innerHTML = buildCardMarkup(item);
       const card = temp.firstElementChild;
       if (card) {
-        projectsGrid.prepend(card);
+        insertCardByYear(card);
       }
     });
+
+    syncOwnerCardControls(isOwnerVisible);
 
     if (isOwnerVisible && ownerStatus && unpublishedDrafts.length > 0) {
       ownerStatus.innerHTML = `Локальных черновиков на этом ПК: <strong>${unpublishedDrafts.length}</strong>. Чтобы они появились на телефонах, скачайте или скопируйте обновлённый <strong>works.html</strong> и замените им файл в репозитории GitHub.`;
@@ -1210,7 +1250,11 @@ function initApp() {
     clone.classList.remove('is-loading', 'no-preloader', 'is-page-entering', 'is-page-leaving');
 
     const clonedBody = clone.querySelector('body');
-    if (clonedBody) clonedBody.removeAttribute('style');
+    if (clonedBody) {
+      clonedBody.classList.remove('is-owner-active');
+      if (!clonedBody.className.trim()) clonedBody.removeAttribute('class');
+      clonedBody.removeAttribute('style');
+    }
 
     const clonedPreloader = clone.querySelector('#preloader');
     if (clonedPreloader) clonedPreloader.classList.remove('is-hidden');
@@ -1243,7 +1287,7 @@ function initApp() {
       btn.classList.toggle('is-active', btn.dataset.ownerMode === 'single');
     });
 
-    clone.querySelectorAll('.owner-card-remove').forEach((btn) => btn.remove());
+    clone.querySelectorAll('.owner-card-controls, .owner-card-remove').forEach((el) => el.remove());
     clone.querySelectorAll('.project-card').forEach((card) => {
       card.classList.remove('is-hidden');
       card.removeAttribute('data-custom-id');
@@ -1489,17 +1533,49 @@ function initApp() {
       });
     }
 
+    // Управление карточками в режиме владельца: перемещение (← / →) и удаление
     projectsGrid.addEventListener('click', (e) => {
-      const removeBtn = e.target.closest('.owner-card-remove');
-      if (!removeBtn) return;
+      const actionBtn = e.target.closest('[data-card-act]');
+      if (!actionBtn) return;
       e.stopPropagation();
 
-      const id = removeBtn.dataset.removeId;
-      const updated = getSavedCustomWorks().filter((item) => String(item.id) !== String(id));
-      saveCustomWorks(updated);
-      renderStoredWorks(true);
-      if (ownerStatus) {
-        ownerStatus.textContent = 'Работа удалена из локального черновика.';
+      const card = actionBtn.closest('.project-card');
+      if (!card) return;
+
+      const act = actionBtn.dataset.cardAct;
+      if (act === 'remove') {
+        const customId = card.dataset.customId;
+        if (customId) {
+          const updated = getSavedCustomWorks().filter((item) => String(item.id) !== String(customId));
+          saveCustomWorks(updated);
+        }
+        card.remove();
+        applyYearFilter(activeYear);
+        if (ownerStatus) {
+          ownerStatus.innerHTML = 'Карточка удалена. Нажмите <strong>«Скачать обновлённый works.html»</strong> (или «Скопировать весь works.html»), чтобы сохранить изменения на GitHub.';
+        }
+      } else if (act === 'prev') {
+        let prev = card.previousElementSibling;
+        while (prev && (!prev.classList.contains('project-card') || prev.classList.contains('is-hidden'))) {
+          prev = prev.previousElementSibling;
+        }
+        if (prev) {
+          projectsGrid.insertBefore(card, prev);
+          if (ownerStatus) {
+            ownerStatus.innerHTML = 'Порядок карточек изменён. Не забудьте скачать или скопировать обновлённый <strong>works.html</strong>.';
+          }
+        }
+      } else if (act === 'next') {
+        let next = card.nextElementSibling;
+        while (next && (!next.classList.contains('project-card') || next.classList.contains('is-hidden'))) {
+          next = next.nextElementSibling;
+        }
+        if (next) {
+          projectsGrid.insertBefore(next, card);
+          if (ownerStatus) {
+            ownerStatus.innerHTML = 'Порядок карточек изменён. Не забудьте скачать или скопировать обновлённый <strong>works.html</strong>.';
+          }
+        }
       }
     });
 
@@ -1548,7 +1624,7 @@ function initApp() {
           currentWorks.push(newSeriesItem);
           saveCustomWorks(currentWorks);
 
-          lastGeneratedCardHTML = buildCardMarkup(newSeriesItem, false);
+          lastGeneratedCardHTML = buildCardMarkup(newSeriesItem);
           renderStoredWorks(true);
 
           ownerTitleInput.value = '';
@@ -1556,7 +1632,7 @@ function initApp() {
           if (ownerSeriesList) ownerSeriesList.innerHTML = '';
 
           if (ownerStatus) {
-            ownerStatus.innerHTML = `Серия <strong>«${escapeHTML(title)}»</strong> (${formatSheetsCount(sheets.length)}) добавлена! Чтобы она появилась на телефонах, нажмите <strong>«Скачать обновлённый works.html»</strong> (или «Скопировать весь works.html») и обновите файл на GitHub.`;
+            ownerStatus.innerHTML = `Серия <strong>«${escapeHTML(title)}»</strong> (${formatSheetsCount(sheets.length)}) добавлена в раздел <strong>${year}</strong>! Нажмите <strong>«Скачать обновлённый works.html»</strong> (или «Скопировать весь works.html») и обновите файл на GitHub.`;
           }
           return;
         }
@@ -1577,7 +1653,7 @@ function initApp() {
         currentWorks.push(newItem);
         saveCustomWorks(currentWorks);
 
-        lastGeneratedCardHTML = buildCardMarkup(newItem, false);
+        lastGeneratedCardHTML = buildCardMarkup(newItem);
         renderStoredWorks(true);
 
         ownerTitleInput.value = '';
@@ -1586,7 +1662,7 @@ function initApp() {
         if (ownerFileInput) ownerFileInput.value = '';
 
         if (ownerStatus) {
-          ownerStatus.innerHTML = `Работа <strong>«${escapeHTML(newItem.title)}»</strong> добавлена! Чтобы она появилась на телефонах, нажмите <strong>«Скачать обновлённый works.html»</strong> (или «Скопировать весь works.html») и обновите файл на GitHub.`;
+          ownerStatus.innerHTML = `Работа <strong>«${escapeHTML(newItem.title)}»</strong> добавлена в раздел <strong>${year}</strong>! Нажмите <strong>«Скачать обновлённый works.html»</strong> (или «Скопировать весь works.html») и обновите файл на GitHub.`;
         }
       });
     }
@@ -1631,7 +1707,7 @@ function initApp() {
         const works = getSavedCustomWorks();
         const codeToCopy =
           lastGeneratedCardHTML ||
-          (works.length > 0 ? buildCardMarkup(works[works.length - 1], false) : '');
+          (works.length > 0 ? buildCardMarkup(works[works.length - 1]) : '');
 
         if (!codeToCopy) {
           if (ownerStatus) ownerStatus.textContent = 'Сначала добавьте работу или серию через форму выше.';
