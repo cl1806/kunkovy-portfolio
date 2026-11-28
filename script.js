@@ -12,6 +12,25 @@ if (navState === 'nav:logo') {
   root.classList.add('is-loading');
 }
 
+// Страховка на случай, если отдельный файл остался в .jpg или .png (или наоборот в .webp)
+window.addEventListener(
+  'error',
+  (e) => {
+    const target = e.target;
+    if (!target || target.tagName !== 'IMG' || target.dataset.extFallbackTried) return;
+    const rawSrc = target.getAttribute('src') || '';
+    if (!rawSrc) return;
+
+    target.dataset.extFallbackTried = '1';
+    if (/\.webp(\?.*)?$/i.test(rawSrc)) {
+      target.src = rawSrc.replace(/\.webp(\?.*)?$/i, '.jpg$1');
+    } else if (/\.(jpe?g|png)(\?.*)?$/i.test(rawSrc)) {
+      target.src = rawSrc.replace(/\.(jpe?g|png)(\?.*)?$/i, '.webp$2');
+    }
+  },
+  true
+);
+
 function initApp() {
   const logoLink = document.getElementById('logo-link');
   const preloader = document.getElementById('preloader');
@@ -76,7 +95,7 @@ function initApp() {
         setTimeout(() => {
           isBusy = false;
           if (onComplete) onComplete();
-        }, 140);
+        }, 120);
       }
     }
 
@@ -139,69 +158,106 @@ function initApp() {
     });
   });
 
-  // Оптимизированная фоновая лента работ на главной
+  // Оптимизированная фоновая лента работ на главной (параллельное декодирование WebP вне основного потока)
   const heroSection = document.getElementById('hero-section');
   const heroMarquee = document.getElementById('hero-marquee');
   const marqueeTrack1 = document.getElementById('marquee-track-1');
   const marqueeTrack2 = document.getElementById('marquee-track-2');
   let marqueeInitialized = false;
 
-  function drawCoverThumbnail(img, canvas) {
+  function toSafeRequestUrl(rawSrc) {
+    return encodeURI(String(rawSrc || '').replace(/%23/g, '#')).replace(/#/g, '%23');
+  }
+
+  function drawCoverThumbnail(source, canvas) {
     const ctx = canvas.getContext('2d', { alpha: false });
-    if (!ctx || !img.naturalWidth || !img.naturalHeight) return;
+    const srcW = source.naturalWidth || source.width;
+    const srcH = source.naturalHeight || source.height;
+    if (!ctx || !srcW || !srcH) return;
 
     const targetW = canvas.width;
     const targetH = canvas.height;
     const targetRatio = targetW / targetH;
-    const srcRatio = img.naturalWidth / img.naturalHeight;
+    const srcRatio = srcW / srcH;
 
     let sx = 0;
     let sy = 0;
-    let sWidth = img.naturalWidth;
-    let sHeight = img.naturalHeight;
+    let sWidth = srcW;
+    let sHeight = srcH;
 
     if (srcRatio > targetRatio) {
-      sWidth = Math.round(img.naturalHeight * targetRatio);
-      sx = Math.round((img.naturalWidth - sWidth) / 2);
+      sWidth = Math.round(srcH * targetRatio);
+      sx = Math.round((srcW - sWidth) / 2);
     } else {
-      sHeight = Math.round(img.naturalWidth / targetRatio);
-      sy = Math.round((img.naturalHeight - sHeight) / 2);
+      sHeight = Math.round(srcW / targetRatio);
+      sy = Math.round((srcH - sHeight) / 2);
     }
 
-    ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, targetW, targetH);
+    ctx.drawImage(source, sx, sy, sWidth, sHeight, 0, 0, targetW, targetH);
   }
 
-  function decodeQueueInBatches(tasks, batchSize = 2) {
+  function loadViaImageElement(src, task, onDone) {
+    const loaderImg = new Image();
+    loaderImg.decoding = 'async';
+
+    const finish = () => {
+      if (loaderImg.naturalWidth) {
+        drawCoverThumbnail(loaderImg, task.c1);
+        drawCoverThumbnail(loaderImg, task.c2);
+      }
+      loaderImg.src = '';
+      onDone();
+    };
+
+    loaderImg.onload = () => {
+      if (typeof loaderImg.decode === 'function') {
+        loaderImg.decode().then(finish).catch(finish);
+      } else {
+        finish();
+      }
+    };
+    loaderImg.onerror = onDone;
+    loaderImg.src = src;
+  }
+
+  function decodeQueueInParallel(tasks, concurrency = 6) {
     let cursor = 0;
+    const canOffThreadDecode =
+      typeof fetch === 'function' &&
+      typeof createImageBitmap === 'function' &&
+      window.location.protocol !== 'file:';
 
     function runNext() {
       if (cursor >= tasks.length) return;
       const task = tasks[cursor++];
+      const requestUrl = toSafeRequestUrl(task.src);
 
-      const loaderImg = new Image();
-      loaderImg.decoding = 'async';
-
-      const finish = () => {
-        if (loaderImg.naturalWidth) {
-          drawCoverThumbnail(loaderImg, task.c1);
-          drawCoverThumbnail(loaderImg, task.c2);
-        }
-        loaderImg.src = '';
-        setTimeout(runNext, 25);
-      };
-
-      loaderImg.onload = () => {
-        if (typeof loaderImg.decode === 'function') {
-          loaderImg.decode().then(finish).catch(finish);
-        } else {
-          finish();
-        }
-      };
-      loaderImg.onerror = () => setTimeout(runNext, 10);
-      loaderImg.src = task.src;
+      if (canOffThreadDecode) {
+        fetch(requestUrl, { priority: 'low' })
+          .then((res) => (res.ok ? res.blob() : Promise.reject(new Error('HTTP ' + res.status))))
+          .then((blob) =>
+            createImageBitmap(blob, {
+              resizeWidth: 220,
+              resizeHeight: 275,
+              resizeQuality: 'medium'
+            }).catch(() => createImageBitmap(blob))
+          )
+          .then((bitmap) => {
+            drawCoverThumbnail(bitmap, task.c1);
+            drawCoverThumbnail(bitmap, task.c2);
+            if (typeof bitmap.close === 'function') bitmap.close();
+            runNext();
+          })
+          .catch(() => {
+            loadViaImageElement(task.src, task, runNext);
+          });
+      } else {
+        loadViaImageElement(task.src, task, runNext);
+      }
     }
 
-    for (let i = 0; i < batchSize; i++) {
+    const workers = Math.min(concurrency, tasks.length);
+    for (let i = 0; i < workers; i++) {
       runNext();
     }
   }
@@ -241,20 +297,28 @@ function initApp() {
     if (marqueeInitialized || !marqueeTrack1 || !marqueeTrack2) return;
     marqueeInitialized = true;
 
-    let sources1 = Array.from(marqueeTrack1.querySelectorAll('img')).map((img) => img.getAttribute('src'));
-    const sources2 = Array.from(marqueeTrack2.querySelectorAll('img')).map((img) => img.getAttribute('src'));
+    const readSources = (track) =>
+      Array.from(track.querySelectorAll('[data-src], img'))
+        .map((el) => el.getAttribute('data-src') || el.getAttribute('src'))
+        .filter(Boolean);
+
+    let sources1 = readSources(marqueeTrack1);
+    const sources2 = readSources(marqueeTrack2);
 
     try {
       const rawWorks = localStorage.getItem('kunkovy_custom_works');
       const customWorks = rawWorks ? JSON.parse(rawWorks) : [];
       if (customWorks.length > 0) {
-        const customSources = customWorks.map((item) => {
-          const coverFile = Array.isArray(item.series) && item.series.length > 0
-            ? item.series[0].filename
-            : item.filename;
-          const cleanName = String(coverFile || '').trim().replace(/^Работы\/\d{4}\//i, '');
-          return `Работы/${item.year}/${cleanName.replace(/#/g, '%23')}`;
-        }).filter(Boolean);
+        const customSources = customWorks
+          .map((item) => {
+            const coverFile =
+              Array.isArray(item.series) && item.series.length > 0
+                ? item.series[0].filename
+                : item.filename;
+            const cleanName = String(coverFile || '').trim().replace(/^Работы\/\d{4}\//i, '');
+            return `Работы/${item.year}/${cleanName.replace(/#/g, '%23')}`;
+          })
+          .filter(Boolean);
         sources1 = [...customSources.reverse(), ...sources1];
       }
     } catch (e) {}
@@ -269,7 +333,7 @@ function initApp() {
       if (tasks2[i]) interleaved.push(tasks2[i]);
     }
 
-    decodeQueueInBatches(interleaved, 2);
+    decodeQueueInParallel(interleaved, 6);
 
     if (heroSection && heroMarquee && 'IntersectionObserver' in window) {
       const heroObserver = new IntersectionObserver(
@@ -284,14 +348,14 @@ function initApp() {
     }
   }
 
+  // Запускаем прелоадер и одновременно в фоне готовим миниатюры WebP для ленты
+  initMarquee();
+
   if (root.classList.contains('is-loading')) {
-    runLoader(1000, () => {
+    runLoader(950, () => {
       if (preloader) preloader.classList.add('is-hidden');
       root.classList.remove('is-loading');
-      setTimeout(initMarquee, 120);
     });
-  } else {
-    initMarquee();
   }
 
   // 3. Скрытие шапки при скролле вниз и кнопка «Наверх»
@@ -660,7 +724,6 @@ function initApp() {
       document.body.style.overflow = '';
     }
 
-    // Сквозной переход назад: внутри серии по листам, с 1-го листа серии — к предыдущему проекту (на его последний лист)
     function showPrev() {
       visibleCards = getVisibleCards();
       if (visibleCards.length === 0) return;
@@ -674,7 +737,6 @@ function initApp() {
       }
     }
 
-    // Сквозной переход вперёд: внутри серии по листам, после последнего листа — к следующему проекту (на 1-й лист)
     function showNext() {
       visibleCards = getVisibleCards();
       if (visibleCards.length === 0) return;
@@ -952,7 +1014,7 @@ function initApp() {
     });
   }
 
-  // 6. Скрытый режим владельца (одиночные работы и серии работ)
+  // 6. Скрытый режим владельца (одиночные работы и серии работ + синхронизация с мобильными)
   const ownerPanel = document.getElementById('owner-panel');
   const ownerPanelTitle = document.getElementById('owner-panel-title');
   const ownerForm = document.getElementById('owner-form');
@@ -976,6 +1038,7 @@ function initApp() {
   const ownerDescInput = document.getElementById('owner-desc');
   const ownerSubmitBtn = document.getElementById('owner-submit-btn');
   const ownerDownloadBtn = document.getElementById('owner-download-html');
+  const ownerCopyFullHtmlBtn = document.getElementById('owner-copy-full-html');
   const ownerCopyBtn = document.getElementById('owner-copy-code');
   const ownerStatus = document.getElementById('owner-status');
   const footerCopy = document.getElementById('footer-copy');
@@ -1018,6 +1081,19 @@ function initApp() {
     const cleanName = String(filename || '').trim().replace(/^Работы\/\d{4}\//i, '');
     const safeName = cleanName.replace(/#/g, '%23');
     return `Работы/${year}/${safeName}`;
+  }
+
+  function normalizeSrcForDedupe(src) {
+    try {
+      return decodeURIComponent(String(src || '').trim())
+        .replace(/\.[^/.]+$/, '')
+        .toLowerCase();
+    } catch (e) {
+      return String(src || '')
+        .trim()
+        .replace(/\.[^/.]+$/, '')
+        .toLowerCase();
+    }
   }
 
   function escapeHTML(str) {
@@ -1085,8 +1161,35 @@ function initApp() {
     if (!projectsGrid) return;
     projectsGrid.querySelectorAll('[data-custom-id]').forEach((el) => el.remove());
 
+    // Собираем пути работ, которые уже сохранены в самом файле works.html, чтобы не было дублей на ПК
+    const existingStaticSrcs = new Set();
+    projectsGrid.querySelectorAll('.project-card').forEach((card) => {
+      const img = card.querySelector('.project-preview img');
+      if (img) existingStaticSrcs.add(normalizeSrcForDedupe(img.getAttribute('src')));
+      const seriesAttr = card.getAttribute('data-series');
+      if (seriesAttr) {
+        seriesAttr.split('|').forEach((entry) => {
+          const path = entry.split('::')[0];
+          if (path) existingStaticSrcs.add(normalizeSrcForDedupe(path));
+        });
+      }
+    });
+
     const works = getSavedCustomWorks();
-    [...works].reverse().forEach((item) => {
+    const unpublishedDrafts = works.filter((item) => {
+      const coverFile =
+        Array.isArray(item.series) && item.series.length > 0
+          ? item.series[0].filename
+          : item.filename;
+      const itemSrc = normalizeSrcForDedupe(encodeImagePath(item.year, coverFile));
+      return !existingStaticSrcs.has(itemSrc);
+    });
+
+    if (unpublishedDrafts.length !== works.length) {
+      saveCustomWorks(unpublishedDrafts);
+    }
+
+    [...unpublishedDrafts].reverse().forEach((item) => {
       const temp = document.createElement('div');
       temp.innerHTML = buildCardMarkup(item, isOwnerVisible);
       const card = temp.firstElementChild;
@@ -1095,7 +1198,86 @@ function initApp() {
       }
     });
 
+    if (isOwnerVisible && ownerStatus && unpublishedDrafts.length > 0) {
+      ownerStatus.innerHTML = `Локальных черновиков на этом ПК: <strong>${unpublishedDrafts.length}</strong>. Чтобы они появились на телефонах, скачайте или скопируйте обновлённый <strong>works.html</strong> и замените им файл в репозитории GitHub.`;
+    }
+
     applyYearFilter(activeYear);
+  }
+
+  function buildCleanWorksHTML() {
+    const clone = document.documentElement.cloneNode(true);
+    clone.classList.remove('is-loading', 'no-preloader', 'is-page-entering', 'is-page-leaving');
+
+    const clonedBody = clone.querySelector('body');
+    if (clonedBody) clonedBody.removeAttribute('style');
+
+    const clonedPreloader = clone.querySelector('#preloader');
+    if (clonedPreloader) clonedPreloader.classList.remove('is-hidden');
+
+    const clonedFill = clone.querySelector('#preloader-fill');
+    if (clonedFill) clonedFill.style.transform = 'scaleX(0)';
+
+    const clonedPercent = clone.querySelector('#preloader-percent');
+    if (clonedPercent) clonedPercent.textContent = '0%';
+
+    const clonedHeader = clone.querySelector('#site-header');
+    if (clonedHeader) clonedHeader.classList.remove('is-minimized');
+
+    const clonedPanel = clone.querySelector('#owner-panel');
+    if (clonedPanel) {
+      clonedPanel.classList.remove('is-open');
+      clonedPanel.hidden = true;
+    }
+
+    const clonedSeriesList = clone.querySelector('#owner-series-list');
+    if (clonedSeriesList) clonedSeriesList.innerHTML = '';
+
+    const clonedSeriesBox = clone.querySelector('#owner-series-box');
+    if (clonedSeriesBox) clonedSeriesBox.hidden = true;
+
+    const clonedSingleField = clone.querySelector('#owner-single-file-field');
+    if (clonedSingleField) clonedSingleField.hidden = false;
+
+    clone.querySelectorAll('.owner-mode-btn').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset.ownerMode === 'single');
+    });
+
+    clone.querySelectorAll('.owner-card-remove').forEach((btn) => btn.remove());
+    clone.querySelectorAll('.project-card').forEach((card) => {
+      card.classList.remove('is-hidden');
+      card.removeAttribute('data-custom-id');
+    });
+
+    clone.querySelectorAll('.filter-btn').forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset.filter === 'all');
+    });
+
+    const clonedEmpty = clone.querySelector('#projects-empty');
+    if (clonedEmpty) clonedEmpty.hidden = true;
+
+    const clonedScrollTop = clone.querySelector('#scroll-top-btn');
+    if (clonedScrollTop) clonedScrollTop.classList.remove('is-visible');
+
+    const clonedLightbox = clone.querySelector('#lightbox');
+    if (clonedLightbox) {
+      clonedLightbox.classList.remove('is-open', 'is-zoomed', 'is-dragging');
+      clonedLightbox.setAttribute('aria-hidden', 'true');
+    }
+
+    const clonedSeriesBar = clone.querySelector('#lightbox-series-bar');
+    if (clonedSeriesBar) clonedSeriesBar.hidden = true;
+
+    const clonedMedia = clone.querySelector('#lightbox-media');
+    if (clonedMedia) {
+      clonedMedia.innerHTML = '';
+      clonedMedia.removeAttribute('style');
+    }
+
+    const clonedCounter = clone.querySelector('#lightbox-counter');
+    if (clonedCounter) clonedCounter.textContent = '';
+
+    return '<!DOCTYPE html>\n' + clone.outerHTML;
   }
 
   function updateSeriesRowNumbers() {
@@ -1112,7 +1294,7 @@ function initApp() {
     row.className = 'owner-series-item';
     row.innerHTML = `
       <span class="owner-series-num">1</span>
-      <input type="text" class="series-item-file" value="${escapeHTML(filename)}" placeholder="Имя файла.jpg">
+      <input type="text" class="series-item-file" value="${escapeHTML(filename)}" placeholder="Имя файла.webp">
       <input type="text" class="series-item-title" value="${escapeHTML(title)}" placeholder="Название листа (например: Лист 1)">
       <div class="owner-series-item-actions">
         <button type="button" class="owner-series-mini-btn" data-series-act="up" title="Выше">↑</button>
@@ -1317,7 +1499,7 @@ function initApp() {
       saveCustomWorks(updated);
       renderStoredWorks(true);
       if (ownerStatus) {
-        ownerStatus.textContent = 'Работа удалена из черновика.';
+        ownerStatus.textContent = 'Работа удалена из локального черновика.';
       }
     });
 
@@ -1374,7 +1556,7 @@ function initApp() {
           if (ownerSeriesList) ownerSeriesList.innerHTML = '';
 
           if (ownerStatus) {
-            ownerStatus.innerHTML = `Серия <strong>«${escapeHTML(title)}»</strong> (${formatSheetsCount(sheets.length)}) добавлена! Нажмите <strong>«Скачать обновлённый works.html»</strong> и замените файл в папке сайта.`;
+            ownerStatus.innerHTML = `Серия <strong>«${escapeHTML(title)}»</strong> (${formatSheetsCount(sheets.length)}) добавлена! Чтобы она появилась на телефонах, нажмите <strong>«Скачать обновлённый works.html»</strong> (или «Скопировать весь works.html») и обновите файл на GitHub.`;
           }
           return;
         }
@@ -1404,85 +1586,14 @@ function initApp() {
         if (ownerFileInput) ownerFileInput.value = '';
 
         if (ownerStatus) {
-          ownerStatus.innerHTML = `Работа <strong>«${escapeHTML(newItem.title)}»</strong> добавлена! Нажмите <strong>«Скачать обновлённый works.html»</strong> и замените файл в папке сайта.`;
+          ownerStatus.innerHTML = `Работа <strong>«${escapeHTML(newItem.title)}»</strong> добавлена! Чтобы она появилась на телефонах, нажмите <strong>«Скачать обновлённый works.html»</strong> (или «Скопировать весь works.html») и обновите файл на GitHub.`;
         }
       });
     }
 
     if (ownerDownloadBtn) {
       ownerDownloadBtn.addEventListener('click', () => {
-        const clone = document.documentElement.cloneNode(true);
-        clone.classList.remove('is-loading', 'no-preloader', 'is-page-entering', 'is-page-leaving');
-
-        const clonedBody = clone.querySelector('body');
-        if (clonedBody) clonedBody.removeAttribute('style');
-
-        const clonedPreloader = clone.querySelector('#preloader');
-        if (clonedPreloader) clonedPreloader.classList.remove('is-hidden');
-
-        const clonedFill = clone.querySelector('#preloader-fill');
-        if (clonedFill) clonedFill.style.transform = 'scaleX(0)';
-
-        const clonedPercent = clone.querySelector('#preloader-percent');
-        if (clonedPercent) clonedPercent.textContent = '0%';
-
-        const clonedHeader = clone.querySelector('#site-header');
-        if (clonedHeader) clonedHeader.classList.remove('is-minimized');
-
-        const clonedPanel = clone.querySelector('#owner-panel');
-        if (clonedPanel) {
-          clonedPanel.classList.remove('is-open');
-          clonedPanel.hidden = true;
-        }
-
-        const clonedSeriesList = clone.querySelector('#owner-series-list');
-        if (clonedSeriesList) clonedSeriesList.innerHTML = '';
-
-        const clonedSeriesBox = clone.querySelector('#owner-series-box');
-        if (clonedSeriesBox) clonedSeriesBox.hidden = true;
-
-        const clonedSingleField = clone.querySelector('#owner-single-file-field');
-        if (clonedSingleField) clonedSingleField.hidden = false;
-
-        clone.querySelectorAll('.owner-mode-btn').forEach((btn) => {
-          btn.classList.toggle('is-active', btn.dataset.ownerMode === 'single');
-        });
-
-        clone.querySelectorAll('.owner-card-remove').forEach((btn) => btn.remove());
-        clone.querySelectorAll('.project-card').forEach((card) => {
-          card.classList.remove('is-hidden');
-          card.removeAttribute('data-custom-id');
-        });
-
-        clone.querySelectorAll('.filter-btn').forEach((btn) => {
-          btn.classList.toggle('is-active', btn.dataset.filter === 'all');
-        });
-
-        const clonedEmpty = clone.querySelector('#projects-empty');
-        if (clonedEmpty) clonedEmpty.hidden = true;
-
-        const clonedScrollTop = clone.querySelector('#scroll-top-btn');
-        if (clonedScrollTop) clonedScrollTop.classList.remove('is-visible');
-
-        const clonedLightbox = clone.querySelector('#lightbox');
-        if (clonedLightbox) {
-          clonedLightbox.classList.remove('is-open', 'is-zoomed', 'is-dragging');
-          clonedLightbox.setAttribute('aria-hidden', 'true');
-        }
-
-        const clonedSeriesBar = clone.querySelector('#lightbox-series-bar');
-        if (clonedSeriesBar) clonedSeriesBar.hidden = true;
-
-        const clonedMedia = clone.querySelector('#lightbox-media');
-        if (clonedMedia) {
-          clonedMedia.innerHTML = '';
-          clonedMedia.removeAttribute('style');
-        }
-
-        const clonedCounter = clone.querySelector('#lightbox-counter');
-        if (clonedCounter) clonedCounter.textContent = '';
-
-        const fullHTML = '<!DOCTYPE html>\n' + clone.outerHTML;
+        const fullHTML = buildCleanWorksHTML();
         const blob = new Blob([fullHTML], { type: 'text/html;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1494,7 +1605,23 @@ function initApp() {
         URL.revokeObjectURL(url);
 
         if (ownerStatus) {
-          ownerStatus.textContent = 'Файл works.html скачан. Замените им старый works.html в папке сайта.';
+          ownerStatus.innerHTML = 'Файл <strong>works.html</strong> скачан. Загрузите его в репозиторий на GitHub (и сами картинки в <strong>Работы/год/</strong>), чтобы работы появились на телефонах.';
+        }
+      });
+    }
+
+    if (ownerCopyFullHtmlBtn) {
+      ownerCopyFullHtmlBtn.addEventListener('click', async () => {
+        const fullHTML = buildCleanWorksHTML();
+        try {
+          await navigator.clipboard.writeText(fullHTML);
+          if (ownerStatus) {
+            ownerStatus.innerHTML = 'Весь код <strong>works.html</strong> скопирован! Откройте <strong>works.html</strong> на GitHub → нажмите карандаш (Edit) → <strong>Ctrl+A</strong> → <strong>Ctrl+V</strong> → <strong>Commit changes</strong>.';
+          }
+        } catch (err) {
+          if (ownerStatus) {
+            ownerStatus.textContent = 'Не удалось скопировать автоматически — используйте кнопку «Скачать обновлённый works.html».';
+          }
         }
       });
     }
