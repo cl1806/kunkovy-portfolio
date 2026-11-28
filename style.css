@@ -1217,7 +1217,7 @@ html.is-loading .marquee-track,
   font-variant-numeric: tabular-nums;
 }
 
-/* Компактная подпись к работе/листу серии — влезает целиком без обрезания */
+/* Компактная подпись к работе/листу серии */
 .lightbox-caption {
   text-align: center;
   max-width: 660px;
@@ -1369,22 +1369,90 @@ html.is-loading .marquee-track,
   right: 20px;
 }
 
-/* Обо мне (about.html) */
-.about-single {
-  max-width: 700px;
+/* Обо мне (about.html) — текст и стилизованное фото */
+.about-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.85fr;
+  align-items: start;
+  gap: 48px;
 }
 
+.about-story p,
 .about-text p {
   font-family: var(--font-body);
-  font-size: 1.1rem;
+  font-size: 1.06rem;
   line-height: 1.65;
   color: #cccccc;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
+.about-story p:last-child,
+.about-text p:last-child {
+  margin-bottom: 0;
+}
+
+.about-story strong,
 .about-text strong {
   color: var(--text-main);
   font-weight: 600;
+}
+
+.about-photo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 10px 12px;
+  transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-photo-card:hover {
+  border-color: #484848;
+  transform: translateY(-3px);
+}
+
+.about-photo-frame {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.about-photo-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+}
+
+.about-photo-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: grayscale(100%) contrast(1.06);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+}
+
+.about-photo-card:hover .about-photo-frame img {
+  transform: scale(1.025);
+  filter: grayscale(100%) contrast(1.1);
+}
+
+.about-photo-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 0 2px;
+  font-family: var(--font-display);
+  font-stretch: condensed;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .inline-link {
@@ -1640,10 +1708,21 @@ footer {
     font-size: 0.93rem;
   }
 
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .about-photo-card {
+    order: -1;
+    max-width: 440px;
+  }
+
+  .about-story p,
   .about-text p,
   .contact-lead {
-    font-size: 1rem;
-    margin-bottom: 20px;
+    font-size: 0.98rem;
+    margin-bottom: 18px;
   }
 
   .scroll-top-btn {
